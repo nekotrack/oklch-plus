@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oklab Color Lab — Ver. 1.0-pub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #0f172a;
+  --surface:   #1e293b;
+  --surface2:  #263348;
+  --border:    #334155;
+  --primary:   #38bdf8;
+  --text:      #f1f5f9;
+  --muted:     #94a3b8;   /* 対比比 ≈5:1 Secondary情報 */
+  --dimmed:    #64748b;   /* 対比比 ≈3:1 装飾のみ・文字情報禁止 */
+  --dim:       #64748b;   /* --dimmed の別名（後方互換） */
+  --oklab-col: #818cf8;
+  --oklch-col: #34d399;
+  --oklch-bg:  rgba(52,211,153,0.08);
+  --okluch-col:#f472b6;
+  --okluch-bg: rgba(244,114,182,0.08);
+  --gm-col:   #fbbf24;
+  --gm-bg:    rgba(251,191,36,0.08);
+  --r: 8px;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Syne', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  min-height: 100vh;
+  padding: 24px 24px 48px;
+}
+
+/* ── Header ── */
+header {
+  max-width: 1000px;
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 16px;
+}<!-- /header -->
+h1 {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: -0.5px;
+}
+.sub {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+}
+.badge {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* ── Controls ── */
+.controls {
+  max-width: 1000px;
+  margin: 0 auto 24px;
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}<!-- /controls -->
+
+.presets {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}<!-- /presets -->
+.preset-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 6px 12px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.preset-btn:hover { border-color: var(--primary); color: var(--text); }
+.preset-btn.active { border-color: var(--primary); color: var(--primary); background: var(--surface2); }
+.pdot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  flex-shrink: 0;
+}
+
+.pickers {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}<!-- /pickers -->
+.pick-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+}<!-- /pick-group -->
+input[type="color"] {
+  width: 36px; height: 36px;
+  border: 2px solid var(--border);
+  border-radius: var(--r);
+  background: none;
+  cursor: pointer;
+  padding: 2px;
+}
+input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+input[type="color"]::-webkit-color-swatch { border-radius: 5px; border: none; }
+.hex-lbl {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+  min-width: 58px;
+}
+
+.params {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}<!-- /params -->
+.prm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+}<!-- /prm -->
+.prm input[type="range"] {
+  width: 100px;
+  accent-color: var(--primary);
+}
+.prm-val { color: var(--primary); min-width: 36px; }
+
+/* ── Function selector ── */
+
+/* ── Section label ── */
+.section-label {
+  max-width: 1000px;
+  margin: 0 auto 8px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: #f1f5f9;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* ── Gradient panel ── */
+.grad-panel {
+  max-width: 1000px;
+  margin: 0 auto 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+}<!-- /grad-panel -->
+.grad-panel.secondary {
+  opacity: 0.7;
+}
+
+.model-row {
+  display: flex;
+  align-items: stretch;
+}<!-- /model-row -->
+.model-tag {
+  width: 80px;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0 10px;
+  border-left: 2px solid var(--border);
+  gap: 2px;
+  min-height: 76px;
+}<!-- /model-tag -->
+.model-tag .mname {
+  font-size: 13px;
+  font-weight: 700;
+}
+.model-tag .mdesc {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.swatches-wrap {
+  flex: 1;
+  display: flex;
+  padding: 10px 12px;
+  gap: 3px;
+  min-width: 0;
+  height: 76px;
+  align-items: stretch;
+}<!-- /swatches-wrap -->
+.sw {
+  flex: 1 1 0;
+  min-width: 8px;
+  border-radius: 4px;
+  position: relative;
+  transition: transform 0.1s;
+  cursor: default;
+}
+.sw:hover { transform: scaleY(1.08); z-index: 1; }
+.sw.clipped::after {
+  content: '!';
+  position: absolute;
+  bottom: 3px; right: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 1px 3px;
+  background: #ef4444;
+  color: #ffffff;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+/* divider inside panel */
+.row-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 94px 0 12px;
+}
+
+/* ── Triple panel ── */
+.triple-panel {
+  max-width: 1000px;
+  margin: 0 auto 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+}<!-- /triple-panel -->
+
+/* ── Comparison Row B: split cells ── */
+.cmp-row-b {
+  max-width: 1000px;
+  margin: 0 auto 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+}<!-- /cmp-row-b -->
+.cmp-row-b-header {
+  padding: 6px 16px 6px 100px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+  display: flex;
+  gap: 16px;
+}<!-- /cmp-row-b-header -->
+.cmp-row-b-body {
+  display: flex;
+  padding: 8px 12px 8px 100px;
+  gap: 3px;
+}<!-- /cmp-row-b-body -->
+.split-cell {
+  flex: 1 1 0;
+  min-width: 8px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 4px;
+  overflow: hidden;
+  gap: 1px;
+}<!-- /split-cell -->
+.split-top {
+  height: 32px;
+  transition: transform 0.1s;
+}
+.split-bot {
+  height: 32px;
+  transition: transform 0.1s;
+}
+.split-cell:hover .split-top,
+.split-cell:hover .split-bot { transform: scaleX(1.04); }
+.info-strip {
+  max-width: 1000px;
+  margin: 0 auto 24px;
+  padding: 0 94px 0 0;
+  display: flex;
+  gap: 3px;
+}<!-- /info-strip -->
+.info-cell {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}<!-- /info-cell -->
+.ic-row {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  flex-wrap: nowrap;
+}<!-- /ic-row -->
+.ic-val {
+  font-family: var(--mono);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.ic-L { color: #94a3b8; }
+.ic-C { color: #fbbf24; }
+.ic-h { color: #a78bfa; }
+.ic-label {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+/* ── Charts ── */
+.charts {
+  max-width: 1000px;
+  margin: 0 auto 32px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}<!-- /charts -->
+.chart-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px;
+}<!-- /chart-box -->
+.ct-title {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 10px;
+  letter-spacing: 0.3px;
+}
+canvas { display: block; width: 100%; }
+
+
+/* ── Gamut Mapping Panel ── */
+.gm-panel {
+  max-width: 1000px;
+  margin: 0 auto 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+/* ヘッダー行 */
+.gm-header-row {
+  display: flex;
+  align-items: center;
+  min-height: 26px;
+  border-bottom: 1px solid var(--border);
+}
+.gm-hdr-spacer {
+  flex: 1;
+  min-width: 0;
+}
+.gm-hdr-gray {
+  flex: 0 0 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--dimmed);
+  border-left: 1px solid var(--border);
+  letter-spacing: 0.04em;
+}
+.gm-hdr-tag {
+  flex: 0 0 148px;
+  border-left: 2px solid var(--border);
+}
+/* データ行 */
+.gm-row {
+  display: flex;
+  align-items: stretch;
+  height: 80px;
+}
+.gm-row + .gm-row { border-top: 1px solid var(--border); }
+/* カラースウォッチエリア */
+.gm-color-area {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  padding: 10px 12px;
+  gap: 3px;
+  align-items: stretch;
+  position: relative;
+  overflow: hidden;
+}
+.gm-color-area .sw {
+  flex: 1 1 0;
+  min-width: 4px;
+  border-radius: 4px;
+  position: relative;
+  transition: transform 0.1s;
+}
+.gm-color-area .sw:hover { transform: scaleY(1.08); z-index: 1; }
+/* グレーグラデーションエリア（案X: linear-gradient 単一 div）*/
+.gm-gray-area {
+  flex: 0 0 200px;
+  border-left: 1px solid var(--border);
+  padding: 10px 8px;
+  display: flex;
+  align-items: stretch;
+}
+.gm-gray-grad {
+  flex: 1;
+  border-radius: 4px;
+  /* background は JS で linear-gradient に設定 */
+}
+/* ラベルエリア */
+.gm-tag-area {
+  flex: 0 0 148px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0 12px;
+  border-left: 2px solid var(--border);
+  gap: 3px;
+}
+.gm-tag-area .mname { font-size: 13px; font-weight: 700; }
+.gm-tag-area .mdesc {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.3;
+}
+/* クランプ過多オーバーレイ */
+.gm-clamp-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--gm-col);
+  background: rgba(15,23,42,0.55);
+  pointer-events: none;
+  letter-spacing: 0.02em;
+}
+.gm-header {
+  max-width: 1000px;
+  margin: 0 auto 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gm-col);
+  border-radius: var(--r);
+  padding: 12px 16px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.gm-badge {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 12px;
+  white-space: nowrap;
+}
+/* GM モード切替トグル */
+.gm-mode-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.gm-mode-btn {
+  font-family: var(--mono);
+  font-size: 13px;
+  padding: 4px 14px;
+  border: none;
+  background: var(--surface2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.gm-mode-btn.active {
+  background: rgba(251,191,36,0.15);
+  color: var(--gm-col);
+  font-weight: 600;
+}
+.gm-mode-btn:first-child { border-right: 1px solid var(--border); }
+.gm-full-note {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: #7dd3fc;
+  background: rgba(45,212,191,0.08);
+  border: 1px solid rgba(45,212,191,0.25);
+  border-radius: 4px;
+  padding: 4px 10px;
+  white-space: nowrap;
+  display: none;
+}
+.gm-full-note.visible { display: block; }
+/* NR ソフトクランプ UI */
+.gm-clamp-toggle {
+  display: flex; align-items: center; gap: 0;
+  border: 1px solid var(--border); border-radius: 8px; overflow: hidden; flex-shrink: 0;
+}
+.gm-clamp-btn {
+  font-family: var(--mono); font-size: 13px; padding: 4px 14px;
+  border: none; background: var(--surface2); color: var(--muted);
+  cursor: pointer; transition: background 0.15s, color 0.15s; white-space: nowrap;
+}
+.gm-clamp-btn.active {
+  background: rgba(167,139,250,0.15); color: #a78bfa; font-weight: 600;
+}
+.gm-clamp-btn:first-child { border-right: 1px solid var(--border); }
+.gm-nr-params {
+  display: none; align-items: center; gap: 12px;
+  font-family: var(--mono); font-size: 13px; color: var(--muted);
+}
+.gm-nr-params.visible { display: flex; }
+.gm-nr-params label { color: #a78bfa; }
+.gm-nr-params input[type=range] { width: 72px; accent-color: #a78bfa; }
+/* ハード vs ソフト 比較バッジ */
+.gm-cmp-row {
+  display: none; align-items: center; gap: 8px;
+  width: 100%; padding-top: 4px;
+  font-family: var(--mono); font-size: 12px;
+}
+.gm-cmp-row.visible { display: flex; }
+.gm-cmp-badge {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 4px 10px; color: var(--muted);
+}
+.gm-cmp-badge .cmp-label { color: var(--dimmed); margin-right: 4px; }
+.gm-cmp-badge .cmp-val   { color: #f1f5f9; font-weight: 600; }
+.gm-cmp-badge .cmp-soft  { color: #a78bfa; font-weight: 600; }
+.gm-cmp-badge .cmp-hard  { color: var(--muted); }
+.gm-cmp-badge.highlight  { border-color: #a78bfa; background: rgba(167,139,250,0.08); }
+.clamp-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--gm-col);
+  vertical-align: middle;
+  margin-right: 3px;
+}
+
+/* ── Footer ── */
+footer {
+  max-width: 1000px;
+  margin: 0 auto 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: #f1f5f9;
+}<!-- /footer -->
+
+@media (max-width: 640px) {
+  .charts { grid-template-columns: 1fr; }
+  .pickers { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Oklab Color Lab</h1>
+  <span class="sub">Oklab / Oklch / Oklch+ — Gradient Interpolation & Gamut Mapping Tool</span>
+  <span class="badge">Ver. 1.0-pub</span>
+</header><!-- /header -->
+
+<div class="controls">
+  <div class="presets" id="presets"></div><!-- /presets -->
+  <div class="pickers">
+    <div class="pick-group">
+      <span>START</span>
+      <input type="color" id="colorA" value="#22cc44">
+      <span class="hex-lbl" id="hexA">#22cc44</span>
+    </div><!-- /pick-group -->
+    <div class="pick-group">
+      <span>END</span>
+      <input type="color" id="colorB" value="#000000">
+      <span class="hex-lbl" id="hexB">#000000</span>
+    </div><!-- /pick-group -->
+  </div><!-- /pickers -->
+</div><!-- /controls -->
+
+<div class="controls" style="margin-top:-8px">
+  <div class="params">
+    <div class="prm">
+      <span>Steps</span>
+      <input type="range" id="steps" min="5" max="21" step="2" value="21">
+      <span class="prm-val" id="stepsVal">21</span>
+    </div><!-- /prm -->
+  </div><!-- /params -->
+</div><!-- /controls -->
+
+<!-- ── Triple comparison panel (Oklab / Oklch / Okluch) ── -->
+<div class="section-label">▸ Gradient Comparison</div>
+<div class="triple-panel">
+  <div class="model-row">
+    <div class="swatches-wrap" id="sw-oklab"></div><!-- /swatches-wrap -->
+    <div class="model-tag">
+      <span class="mname" style="color:var(--oklab-col)">Oklab</span>
+      <span class="mdesc">(L,a,b)</span>
+    </div><!-- /model-tag -->
+  </div><!-- /model-row -->
+  <div class="row-divider"></div>
+  <div class="model-row">
+    <div class="swatches-wrap" id="sw-oklch"></div><!-- /swatches-wrap -->
+    <div class="model-tag">
+      <span class="mname" style="color:var(--oklch-col)">Oklch</span>
+      <span class="mdesc">(L,C,h)</span>
+    </div><!-- /model-tag -->
+  </div><!-- /model-row -->
+  <div class="row-divider"></div>
+  <div class="model-row">
+    <div class="swatches-wrap" id="sw-okluch"></div><!-- /swatches-wrap -->
+    <div class="model-tag">
+      <span class="mname" style="color:var(--okluch-col)" id="okluch-label">Oklch+</span>
+      <span class="mdesc" id="okluch-desc">(L^α, NR-C, h)</span>
+    </div><!-- /model-tag -->
+  </div><!-- /model-row -->
+</div><!-- /triple-panel -->
+
+<!-- ── Info strip ── -->
+
+<!-- ── Info strip（6ステップ共通）── -->
+<div class="info-strip" id="info-strip"></div><!-- /info-strip -->
+
+<!-- ── 補間経路・彩度プロファイル ── -->
+<div class="charts">
+  <div class="chart-box">
+    <div class="ct-title">▸ Interpolation path on ab plane (Oklch vs Oklch+)</div>
+    <canvas id="canvas-ab" height="240"></canvas>
+  </div><!-- /chart-box -->
+  <div class="chart-box">
+    <div class="ct-title">▸ Chroma C profile — red = out-of-gamut / dashed = gamut limit</div>
+    <canvas id="canvas-c" height="240"></canvas>
+  </div><!-- /chart-box -->
+</div><!-- /charts -->
+
+<!-- ══════════════════════════════════════════════════
+     Gamut Mapping — Layer 3
+════════════════════════════════════════════════════ -->
+<div class="section-label">▸ Gamut Mapping — Layer 3（<span id="gm-mode-label">conservative: C_max(L), all-hue min envelope</span>）</div>
+
+<div class="gm-header">
+  <span style="font-family:var(--mono);font-size:13px;color:var(--muted)">
+    sRGB gamut limit: C ≤ C_max — conservative (L only) or full (L,H)
+  </span>
+  <div class="gm-badge">C_max(midpoint) = <span class="gm-val" id="gm-cmax-val">—</span></div>
+  <div class="gm-badge">Clamp rate = <span class="gm-val" id="gm-clamp-pct">—</span></div>
+  <div class="gm-mode-toggle">
+    <button class="gm-mode-btn active" id="btn-gm-conservative" data-mode="conservative">gamut limit (L only)</button>
+    <button class="gm-mode-btn" id="btn-gm-full" data-mode="full">gamut limit (L,H)</button>
+  </div><!-- /gm-mode-toggle -->
+  <div class="gm-full-note" id="gm-full-note">C_max(L, H) — per-hue upper limit</div>
+  <!-- クランプ方式切替 -->
+  <div class="gm-clamp-toggle">
+    <button class="gm-clamp-btn active" id="btn-clamp-hard" data-clamp="hard">Hard clamp</button>
+    <button class="gm-clamp-btn" id="btn-clamp-soft" data-clamp="soft">NR Soft</button>
+  </div><!-- /gm-clamp-toggle -->
+  <div class="gm-nr-params" id="gm-nr-params">
+    <label>n_gm</label>
+    <input type="range" id="sl-n-gm" min="0.5" max="4" step="0.1" value="2.0">
+    <span id="val-n-gm">2.0</span>
+    <label>σ_gm</label>
+    <input type="range" id="sl-sigma-gm" min="0.05" max="1.0" step="0.05" value="0.30">
+    <span id="val-sigma-gm">0.30</span>
+  </div><!-- /gm-nr-params -->
+  <!-- ハード vs ソフト 客観比較バッジ -->
+  <div class="gm-cmp-row" id="gm-cmp-row">
+    <div class="gm-cmp-badge" id="badge-delta-e">
+      <span class="cmp-label">maxΔE</span>
+      <span class="cmp-val" id="cmp-max-de">—</span>
+      <span class="cmp-label" style="margin-left:8px">meanΔE</span>
+      <span class="cmp-val" id="cmp-mean-de">—</span>
+    </div><!-- /badge-delta-e -->
+    <div class="gm-cmp-badge" id="badge-smooth">
+      <span class="cmp-label">Smoothness S (Hard)</span>
+      <span class="cmp-hard" id="cmp-s-hard">—</span>
+      <span class="cmp-label" style="margin-left:8px">S (NR Soft)</span>
+      <span class="cmp-soft" id="cmp-s-soft">—</span>
+    </div><!-- /badge-smooth -->
+    <div class="gm-cmp-badge highlight" id="badge-verdict">
+      <span class="cmp-label">Smoothness improvement</span>
+      <span class="cmp-val" id="cmp-verdict">—</span>
+    </div><!-- /badge-verdict -->
+  </div><!-- /gm-cmp-row -->
+  <span style="font-family:var(--mono);font-size:13px;color:var(--dimmed)">
+    <span class="clamp-dot"></span>= clamp threshold (pre-limiting)
+    &nbsp;&nbsp;
+    <span style="display:inline-block;background:#ef4444;color:#fff;font-size:11px;font-weight:700;padding:1px 3px;border-radius:3px;vertical-align:middle;font-family:monospace">!</span>
+    = CSS clipping (post-process · ratio collapse)
+  </span>
+</div><!-- /gm-header -->
+
+<div class="gm-panel" id="gm-panel">
+
+  <!-- 列ヘッダー -->
+  <div class="gm-header-row">
+    <div class="gm-hdr-spacer"></div>
+    <div class="gm-hdr-gray">L-gray</div>
+    <div class="gm-hdr-tag"></div>
+  </div><!-- /gm-header-row -->
+
+  <!-- Row 1: Oklab -->
+  <div class="gm-row">
+    <div class="gm-color-area" id="sw-gm-oklab"></div>
+    <div class="gm-gray-area"><div class="gm-gray-grad" id="grd-gm-oklab"></div></div><!-- /gm-gray-area -->
+    <div class="gm-tag-area">
+      <span class="mname" style="color:var(--oklab-col)">Oklab</span>
+      <span class="mdesc">linear interp · reference</span>
+    </div><!-- /gm-tag-area -->
+  </div><!-- /gm-row -->
+
+  <!-- Row 2: 未対策 Oklch -->
+  <div class="gm-row">
+    <div class="gm-color-area" id="sw-gm-raw"></div>
+    <div class="gm-gray-area"><div class="gm-gray-grad" id="grd-gm-raw"></div></div><!-- /gm-gray-area -->
+    <div class="gm-tag-area">
+      <span class="mname" style="color:var(--oklch-col)">Raw Oklch</span>
+      <span class="mdesc">Oklch (CSS post-process)</span>
+    </div><!-- /gm-tag-area -->
+  </div><!-- /gm-row -->
+
+  <!-- Row 3: Oklch+ -->
+  <div class="gm-row">
+    <div class="gm-color-area" id="sw-gm-oklchp"></div>
+    <div class="gm-gray-area"><div class="gm-gray-grad" id="grd-gm-oklchp"></div></div><!-- /gm-gray-area -->
+    <div class="gm-tag-area">
+      <span class="mname" style="color:var(--okluch-col)">Oklch+</span>
+      <span class="mdesc">Layer 2 (C-axis compression)</span>
+    </div><!-- /gm-tag-area -->
+  </div><!-- /gm-row -->
+
+  <!-- Row 4: Oklch+ GM -->
+  <div class="gm-row">
+    <div class="gm-color-area" id="sw-gm-mapped"></div>
+    <div class="gm-gray-area"><div class="gm-gray-grad" id="grd-gm-mapped"></div></div><!-- /gm-gray-area -->
+    <div class="gm-tag-area">
+      <span class="mname" style="color:var(--gm-col)">Oklch+ GM</span>
+      <span class="mdesc">Layer 3 (gamut clamp)</span>
+    </div><!-- /gm-tag-area -->
+  </div><!-- /gm-row -->
+
+
+</div><!-- /gm-panel -->
+
+<footer>
+  <span>© 2026 nekotrack — Code assisted by <a href="https://claude.ai" target="_blank" style="color:var(--muted);text-decoration:none;">Claude</a> (Anthropic)</span>
+  <span>Oklch+ COMBVD STRESS 29.10（surpasses CIEDE2000）</span>
+  <span>Layer 3 Gamut Mapping: gamut limit (L only) · gamut limit (L,H) per-hue | A/B toggle</span>
+</footer><!-- /footer -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  Color Conversions
+// ═══════════════════════════════════════════════════════
+function srgbToLinear(c) {
+  c /= 255;
+  return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+}
+function linearToSrgb(c) {
+  c = Math.max(0, Math.min(1, c));
+  return Math.round(c <= 0.0031308 ? c * 12.92 * 255 : (1.055 * Math.pow(c, 1/2.4) - 0.055) * 255);
+}
+function lrgbToXyz(r, g, b) {
+  return [
+    0.4124564*r + 0.3575761*g + 0.1804375*b,
+    0.2126729*r + 0.7151522*g + 0.0721750*b,
+    0.0193339*r + 0.1191920*g + 0.9503041*b
+  ];
+}
+function xyzToLrgb(x, y, z) {
+  return [
+    3.2404542*x - 1.5371385*y - 0.4985314*z,
+   -0.9692660*x + 1.8760108*y + 0.0415560*z,
+    0.0556434*x - 0.2040259*y + 1.0572252*z
+  ];
+}
+function xyzToOklab(x, y, z) {
+  const l = 0.8189330101*x + 0.3618667424*y - 0.1288597137*z;
+  const m = 0.0329845436*x + 0.9293118715*y + 0.0361456387*z;
+  const s = 0.0482003018*x + 0.2643662691*y + 0.6338517070*z;
+  const lp = Math.cbrt(l), mp = Math.cbrt(m), sp = Math.cbrt(s);
+  return [
+    0.2104542553*lp + 0.7936177850*mp - 0.0040720468*sp,
+    1.9779984951*lp - 2.4285922050*mp + 0.4505937099*sp,
+    0.0259040371*lp + 0.7827717662*mp - 0.8086757660*sp
+  ];
+}
+function oklabToXyz(L, a, b) {
+  const lp = L + 0.3963377774*a + 0.2158037573*b;
+  const mp = L - 0.1055613458*a - 0.0638541728*b;
+  const sp = L - 0.0894841775*a - 1.2914855480*b;
+  const l = lp*lp*lp, m = mp*mp*mp, s = sp*sp*sp;
+  return [
+    1.2270138511*l - 0.5577999807*m + 0.2812561490*s,
+   -0.0405801784*l + 1.1122568696*m - 0.0716766787*s,
+   -0.0763812845*l - 0.4214819784*m + 1.5861632204*s
+  ];
+}
+function hexToOklab(hex) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  const [lr,lg,lb] = [srgbToLinear(r),srgbToLinear(g),srgbToLinear(b)];
+  return xyzToOklab(...lrgbToXyz(lr,lg,lb));
+}
+function toSafe(c) {
+  if (!isFinite(c)) return 0;
+  return Math.max(0, Math.min(255, linearToSrgb(c)));
+}
+function oklabToHex(L, a, b) {
+  const [x,y,z] = oklabToXyz(L,a,b);
+  const [lr,lg,lb] = xyzToLrgb(x,y,z);
+  const clipped = lr<-0.001||lr>1.001||lg<-0.001||lg>1.001||lb<-0.001||lb>1.001;
+  const ri=toSafe(lr), gi=toSafe(lg), bi=toSafe(lb);
+  const hex = '#' +
+    ('0'+ri.toString(16)).slice(-2) +
+    ('0'+gi.toString(16)).slice(-2) +
+    ('0'+bi.toString(16)).slice(-2);
+  return { hex, clipped };
+}
+function toDeg(rad) {
+  return ((rad * 180 / Math.PI) % 360 + 360) % 360;
+}
+
+// ═══════════════════════════════════════════════════════
+//  Interpolation
+// ═══════════════════════════════════════════════════════
+function shortAngle(a, b) {
+  let d = b - a;
+  while (d >  Math.PI) d -= 2*Math.PI;
+  while (d < -Math.PI) d += 2*Math.PI;
+  return d;
+}
+
+// Hue 変調重み: C が小さいほど 0 に収束（NR補集合）
+// C → 0 で Oklab 線形補間に退行し、無彩色端点の特異点を解消する
+// n=0.87, σ=0.34 は Oklch+ の C 軸パラメータを流用
+function hueWeight(C, n = 0.87, sigma = 0.34) {
+  if (C < 1e-12) return 0;
+  const Cn = Math.pow(C, n), sn = Math.pow(sigma, n);
+  return Cn / (Cn + sn);
+}
+
+function interpOklab(labA, labB, n) {
+  return Array.from({length: n}, (_, i) => {
+    const t = i/(n-1);
+    const L = labA[0]+t*(labB[0]-labA[0]);
+    const a = labA[1]+t*(labB[1]-labA[1]);
+    const b = labA[2]+t*(labB[2]-labA[2]);
+    const C = Math.sqrt(a*a+b*b);
+    const h = Math.atan2(b,a);
+    return { L,a,b,C,h, ...oklabToHex(L,a,b) };
+  });
+}
+
+function interpOklch(labA, labB, n) {
+  // 未対策参照行: hue 変調なし・素の Oklch 挙動をそのまま表示
+  const CA = Math.sqrt(labA[1]*labA[1]+labA[2]*labA[2]);
+  const CB = Math.sqrt(labB[1]*labB[1]+labB[2]*labB[2]);
+  const hA = Math.atan2(labA[2],labA[1]);
+  const hB = Math.atan2(labB[2],labB[1]);
+  const dh = shortAngle(hA,hB);
+  return Array.from({length: n}, (_,i) => {
+    const t = i/(n-1);
+    const L = labA[0]+t*(labB[0]-labA[0]);
+    const C = CA+t*(CB-CA);
+    const h = hA+t*dh;
+    const a = C*Math.cos(h), b = C*Math.sin(h);
+    return { L,a,b,C,h, ...oklabToHex(L,a,b) };
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  C-axis compression functions
+// ═══════════════════════════════════════════════════════
+// NR fixed parameters (Oklch+ optimal)
+const NR_PARAM = 0.34;  // σ_C
+const NR_NEXP  = 0.87;  // n_C
+
+
+function compressC(C, fn, p, n=1) {
+  if (C < 1e-12) return 0;
+  if (fn==='power') return Math.pow(C, p);
+  if (fn==='log')   return Math.log1p(p * C);
+  if (fn==='nr') {
+    const Cn = Math.pow(C, n);
+    const sn = Math.pow(p, n);
+    return Cn / (Cn + sn);
+  }
+  return C;
+}
+function decompressC(Cp, fn, p, n=1) {
+  if (Cp <= 0) return 0;
+  if (fn==='power') return Math.pow(Cp, 1/p);
+  if (fn==='log')   return (Math.exp(Cp) - 1) / p;
+  if (fn==='nr') {
+    const Cp_safe = Math.min(Cp, 0.9999);
+    const sn = Math.pow(p, n);
+    return Math.pow(Cp_safe * sn / (1 - Cp_safe), 1/n);
+  }
+  return Cp;
+}
+
+function interpOkluch(labA, labB, n, fn, param, nExp=1) {
+  const CA = Math.sqrt(labA[1]*labA[1]+labA[2]*labA[2]);
+  const CB = Math.sqrt(labB[1]*labB[1]+labB[2]*labB[2]);
+  const hA = Math.atan2(labA[2],labA[1]);
+  const hB = Math.atan2(labB[2],labB[1]);
+  const dh = shortAngle(hA,hB);
+  const CAp = compressC(CA, fn, param, nExp);
+  const CBp = compressC(CB, fn, param, nExp);
+  return Array.from({length: n}, (_,i) => {
+    const t = i/(n-1);
+    const L = labA[0]+t*(labB[0]-labA[0]);
+    const Cp = CAp + t*(CBp-CAp);
+    const C  = decompressC(Cp, fn, param, nExp);
+    const h  = hA + t*dh;
+    // NR hue weight: C→0 で Oklab 線形補間に退行（茶・紫の色かぶり解消）
+    const wh  = hueWeight(C);
+    const a_lch = C*Math.cos(h),              b_lch = C*Math.sin(h);
+    const a_lab = labA[1]+t*(labB[1]-labA[1]), b_lab = labA[2]+t*(labB[2]-labA[2]);
+    const a = wh*a_lch + (1-wh)*a_lab;
+    const b = wh*b_lch + (1-wh)*b_lab;
+    const C_out = Math.sqrt(a*a+b*b);
+    const h_out = Math.atan2(b,a);
+    return { L,a,b,C:C_out,h:h_out, ...oklabToHex(L,a,b) };
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  Layer 3: Gamut Mapping — 保守近似 C_max(L)
+//  設計: C_max(L) = min over all H { max C that stays in sRGB gamut }
+//  手法: 全色相(24方向)を走査し、各方向で二分探索、その最小値を採用
+//  保証: この C 以下なら H に関わらず必ずガマット内に収まる（保守包絡）
+// ═══════════════════════════════════════════════════════
+const _cmaxCache = new Map();
+
+function cMaxConservative(L, hSteps = 24) {
+  // L を 0.005 刻みで丸めてキャッシュ
+  const key = Math.round(L * 200);
+  if (_cmaxCache.has(key)) return _cmaxCache.get(key);
+
+  if (L <= 0.001 || L >= 0.999) {
+    _cmaxCache.set(key, 0);
+    return 0;
+  }
+
+  let cmin = Infinity;
+  for (let i = 0; i < hSteps; i++) {
+    const h = (i / hSteps) * 2 * Math.PI;
+    // 二分探索: この方向での最大安全 C
+    let lo = 0, hi = 0.45;
+    for (let iter = 0; iter < 22; iter++) {
+      const mid = (lo + hi) * 0.5;
+      const a = mid * Math.cos(h);
+      const b = mid * Math.sin(h);
+      if (!oklabToHex(L, a, b).clipped) lo = mid;
+      else hi = mid;
+    }
+    cmin = Math.min(cmin, lo);
+  }
+
+  // 安全マージン 2% を確保（浮動小数点誤差対策）
+  const safeC = cmin * 0.98;
+  _cmaxCache.set(key, safeC);
+  return safeC;
+}
+
+// ═══════════════════════════════════════════════════════
+//  Layer 3: Gamut Mapping — 完全実装 C_max(L, H)
+//  設計: 指定した色相方向での最大 C を 2D キャッシュで管理
+//  解像度: L = 0.005 刻り (kL), H = 5° 刻り (72分割, kH)
+// ═══════════════════════════════════════════════════════
+const _cmaxFullCache = new Map();
+
+function cMaxFull(L, h_rad) {
+  if (L <= 0.001 || L >= 0.999) return 0;
+  let lo = 0, hi = 0.45;
+  for (let iter = 0; iter < 24; iter++) {
+    const mid = (lo + hi) * 0.5;
+    const a = mid * Math.cos(h_rad);
+    const b = mid * Math.sin(h_rad);
+    if (!oklabToHex(L, a, b).clipped) lo = mid;
+    else hi = mid;
+  }
+  return lo * 0.99;
+}
+
+function cMaxFullCached(L, h_rad) {
+  const kL = Math.round(L * 200);
+  // h_rad を 0〜2π に正規化し、5° (= 2π/72) 刻りで量子化
+  const hNorm = ((h_rad % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  const kH = Math.round(hNorm / (2 * Math.PI) * 72) % 72;
+  const key = kL * 100 + kH;
+  if (_cmaxFullCache.has(key)) return _cmaxFullCache.get(key);
+  const v = cMaxFull(L, h_rad);
+  _cmaxFullCache.set(key, v);
+  return v;
+}
+
+// ── GM モード管理 ────────────────────────────────────────
+// 'conservative' = 保守近似 C_max(L)
+// 'full'         = 完全実装 C_max(L, H)
+let gmMode = 'conservative';
+
+// ── クランプ方式管理 ─────────────────────────────────────
+// 'hard' = ハードクランプ min(C, C_max)
+// 'soft' = NR ソフトクランプ C_max × NR(C / C_max)
+let gmClampMode = 'hard';
+let gmNR_n     = 2.0;
+let gmNR_sigma = 0.30;
+
+// NR ソフトクランプ: C を C_max で正規化して NR 圧縮し C_max にスケールバック
+// t = C/C_max: t<<1 → ほぼ素通り / t→1 → 滑らかに圧縮 / t>1 → ソフト飽和
+function applyNRSoftClamp(C, Cmax, n, sigma) {
+  if (Cmax <= 0) return 0;
+  const t  = C / Cmax;
+  const tn = Math.pow(t, n);
+  const sn = Math.pow(sigma, n);
+  return Cmax * tn / (tn + sn);
+}
+
+function cMaxActive(L, h_rad) {
+  return gmMode === 'full'
+    ? cMaxFullCached(L, h_rad)
+    : cMaxConservative(L);
+}
+
+// クランプ適用（方式に応じてハード/ソフトを切替）
+function applyGMClamp(C, Cmax) {
+  if (gmClampMode === 'soft') return applyNRSoftClamp(C, Cmax, gmNR_n, gmNR_sigma);
+  return Math.min(C, Cmax);
+}
+
+// ── ハード vs NRソフト 客観比較 ──────────────────────────
+function compareClampMetrics(ptsOklchp) {
+  const n = ptsOklchp.length;
+
+  // 各点でハード/ソフト両方の C_out を計算
+  const hard = ptsOklchp.map(pt => {
+    const Cmax  = cMaxActive(pt.L, pt.h);
+    const C_out = Math.min(pt.C, Cmax);
+    return { L: pt.L, a: C_out * Math.cos(pt.h), b: C_out * Math.sin(pt.h), C: C_out };
+  });
+  const soft = ptsOklchp.map(pt => {
+    const Cmax  = cMaxActive(pt.L, pt.h);
+    const C_out = applyNRSoftClamp(pt.C, Cmax, gmNR_n, gmNR_sigma);
+    return { L: pt.L, a: C_out * Math.cos(pt.h), b: C_out * Math.sin(pt.h), C: C_out };
+  });
+
+  // ① ΔE（Oklab Euclidean: ハード vs ソフト）
+  const des = hard.map((h, i) => {
+    const s  = soft[i];
+    const dL = h.L - s.L, da = h.a - s.a, db = h.b - s.b;
+    return Math.sqrt(dL*dL + da*da + db*db);
+  });
+  const maxDE  = Math.max(...des);
+  const meanDE = des.reduce((a, b) => a + b, 0) / n;
+
+  // ② 局所滑らかさ S — クランプ発動点（C > C_max）の前後 W 点のみで2次微分を計算
+  // ハードは境界で急停止 → 局所2次微分が大 / ソフトは滑らかに収束 → 局所2次微分が小
+  const W = Math.max(2, Math.round(n * 0.15)); // 前後15%のウィンドウ
+
+  // クランプ発動点インデックスを特定
+  const clampIdx = ptsOklchp
+    .map((pt, i) => ({ i, over: pt.C > cMaxActive(pt.L, pt.h) }))
+    .filter(x => x.over)
+    .map(x => x.i);
+
+  function localSmoothness(pts) {
+    if (clampIdx.length === 0) return 0; // クランプなし → 差なし
+    let S = 0, count = 0;
+    const visited = new Set();
+    clampIdx.forEach(ci => {
+      for (let i = Math.max(1, ci - W); i <= Math.min(n - 2, ci + W); i++) {
+        if (visited.has(i)) continue;
+        visited.add(i);
+        S += Math.abs(pts[i+1].C - 2*pts[i].C + pts[i-1].C);
+        count++;
+      }
+    });
+    return count > 0 ? S * 1000 / count : 0; // 点数で正規化
+  }
+
+  const S_hard = localSmoothness(hard);
+  const S_soft = localSmoothness(soft);
+
+  return { maxDE, meanDE, S_hard, S_soft, clampCount: clampIdx.length };
+}
+
+// 比較バッジを更新
+function updateCmpBadges(ptsOklchp) {
+  const row = document.getElementById('gm-cmp-row');
+  row.classList.toggle('visible', gmClampMode === 'soft');
+  if (gmClampMode !== 'soft') return;
+
+  const { maxDE, meanDE, S_hard, S_soft, clampCount } = compareClampMetrics(ptsOklchp);
+  document.getElementById('cmp-max-de').textContent  = maxDE.toFixed(4);
+  document.getElementById('cmp-mean-de').textContent = meanDE.toFixed(4);
+
+  if (clampCount === 0) {
+    document.getElementById('cmp-s-hard').textContent = '—';
+    document.getElementById('cmp-s-soft').textContent = '—';
+    document.getElementById('cmp-verdict').textContent = 'No clamp triggered';
+    document.getElementById('cmp-verdict').style.color = '#94a3b8';
+    return;
+  }
+
+  document.getElementById('cmp-s-hard').textContent =
+    S_hard.toFixed(3) + ` (${clampCount}点近傍)`;
+  document.getElementById('cmp-s-soft').textContent =
+    S_soft.toFixed(3) + ` (${clampCount}点近傍)`;
+
+  const imp = S_hard > 0 ? (S_hard - S_soft) / S_hard * 100 : 0;
+  const vEl = document.getElementById('cmp-verdict');
+  if (imp > 0) {
+    vEl.textContent = `−${imp.toFixed(1)}%（ソフトが滑らか）`;
+    vEl.style.color = '#a78bfa';
+  } else {
+    vEl.textContent = `+${(-imp).toFixed(1)}%（ハードが滑らか）`;
+    vEl.style.color = '#94a3b8';
+  }
+}
+
+function interpGamutMapped(labA, labB, n, fn, param, nExp = 1) {
+  // Oklch+ 補間 → C を cMaxActive(L, H) で上限クランプ（ハード or NRソフト）
+  const pts = interpOkluch(labA, labB, n, fn, param, nExp);
+  return pts.map(pt => {
+    const Cmax    = cMaxActive(pt.L, pt.h);
+    const C_out   = applyGMClamp(pt.C, Cmax);
+    const clamped = pt.C > Cmax;
+    const a_out   = C_out * Math.cos(pt.h);
+    const b_out   = C_out * Math.sin(pt.h);
+    return { ...pt, ...oklabToHex(pt.L, a_out, b_out),
+             a: a_out, b: b_out, C: C_out, Cmax, clamped };
+  });
+}
+
+
+function renderGamutMapped(labA, labB, n, fn, param, nExp) {
+  const ptsOklab  = interpOklab(labA, labB, n);
+  const ptsRaw    = interpOklch(labA, labB, n);
+  const ptsOklchp = interpOkluch(labA, labB, n, fn, param, nExp);
+  const ptsMapped = interpGamutMapped(labA, labB, n, fn, param, nExp);
+
+  // カラースウォッチ（4行）
+  // 行1-3: ! 表示あり（教育的 / Layer 3 未適用）
+  // 行4:   ! 表示なし（GM 保護済み・クランプ dot のみ）
+  renderGmSwatches('sw-gm-oklab',    ptsOklab);
+  renderGmSwatches('sw-gm-raw',      ptsRaw);
+  renderGmSwatches('sw-gm-oklchp',   ptsOklchp);
+  renderGmSwatches('sw-gm-mapped',   ptsMapped,   true,  false);
+
+  // グレーグラデーション（5行）
+  renderGrayGradient('grd-gm-oklab',    ptsOklab);
+  renderGrayGradient('grd-gm-raw',      ptsRaw);
+  renderGrayGradient('grd-gm-oklchp',   ptsOklchp);
+  renderGrayGradient('grd-gm-mapped',   ptsMapped);
+
+  // クランプ過多オーバーレイ（Layer 3 のみ・70%超）
+  const clampCount = ptsMapped.filter(p => p.clamped).length;
+  const clampPct   = clampCount / n;
+  const gmCell     = document.getElementById('sw-gm-mapped');
+  const existing   = gmCell.querySelector('.gm-clamp-overlay');
+  if (existing) existing.remove();
+  if (clampPct > 0.7) {
+    const ov = document.createElement('div');
+    ov.className = 'gm-clamp-overlay';
+    const modeLabel = gmMode === 'full' ? 'gamut limit (L,H)' : 'gamut limit (L only)';
+    ov.textContent = `${modeLabel} clamp: ${Math.round(clampPct * 100)}% suppressed`;
+    gmCell.appendChild(ov);
+  }
+
+  // バッジ更新
+  const mid = Math.floor(n / 2);
+  document.getElementById('gm-cmax-val').textContent =
+    ptsMapped[mid].Cmax.toFixed(3);
+  document.getElementById('gm-clamp-pct').textContent =
+    clampCount + '/' + n + ' (' + Math.round(clampPct * 100) + '%)';
+
+  // ハード vs ソフト 客観比較バッジ更新
+  updateCmpBadges(ptsOklchp);
+
+  // GM モードラベル更新
+  const modeEl = document.getElementById('gm-mode-label');
+  const noteEl = document.getElementById('gm-full-note');
+  if (modeEl) {
+    const cLabel = gmClampMode === 'soft'
+      ? ` + NRソフト(n=${gmNR_n.toFixed(1)}, σ=${gmNR_sigma.toFixed(2)})`
+      : '';
+    modeEl.textContent = gmMode === 'full'
+      ? `gamut limit (L,H) — per-hue max chroma${cLabel}`
+      : `gamut limit (L only) — all-hue min envelope${cLabel}`;
+  }
+  if (noteEl) {
+    noteEl.classList.toggle('visible', gmMode === 'full');
+  }
+
+  return { ptsOklab, ptsRaw, ptsOklchp, ptsMapped };
+}
+
+// グレーグラデーション描画（案X: linear-gradient 単一 div）
+// OKLCH L 値を左→右に並べた連続グラデーション
+function renderGrayGradient(id, pts) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const stops = pts.map((pt, i) => {
+    const t = (i / (pts.length - 1) * 100).toFixed(1);
+    const { hex } = oklabToHex(pt.L, 0, 0);
+    return `${hex} ${t}%`;
+  });
+  el.style.background = `linear-gradient(to right, ${stops.join(', ')})`;
+}
+
+// gm-color-area にスウォッチを描画（クランプ dot / ! 対応）
+function renderGmSwatches(id, pts, showClampDot = false, showClipped = true) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = '';
+  pts.forEach(pt => {
+    const d = document.createElement('div');
+    d.className = 'sw';
+    d.style.backgroundColor = pt.hex;
+    if (showClipped && pt.clipped) {
+      const bang = document.createElement('span');
+      bang.textContent = '!';
+      bang.style.cssText =
+        'position:absolute;bottom:3px;right:3px;font-size:11px;font-weight:700;' +
+        'line-height:1;padding:1px 3px;background:#ef4444;color:#ffffff;' +
+        'border-radius:3px;font-family:monospace;';
+      d.appendChild(bang);
+    }
+    if (showClampDot && pt.clamped) {
+      const dot = document.createElement('span');
+      dot.className = 'clamp-dot';
+      dot.style.cssText = 'position:absolute;top:4px;left:50%;transform:translateX(-50%);';
+      d.appendChild(dot);
+    }
+    el.appendChild(d);
+  });
+}
+
+function renderComparisonRowB(ptsOklch, ptsOkluch) {
+  const el = document.getElementById('cmp-row-b-body');
+  el.innerHTML = '';
+  const n = ptsOklch.length;
+  for (let i = 0; i < n; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'split-cell';
+    const top = document.createElement('div');
+    top.className = 'split-top';
+    top.style.backgroundColor = ptsOklch[i].hex;
+    const bot = document.createElement('div');
+    bot.className = 'split-bot';
+    bot.style.backgroundColor = ptsOkluch[i].hex;
+    cell.appendChild(top);
+    cell.appendChild(bot);
+    el.appendChild(cell);
+  }
+}
+
+function renderSwatches(id, pts, showClipped = true) {
+  const el = document.getElementById(id);
+  el.innerHTML = '';
+  pts.forEach(pt => {
+    const d = document.createElement('div');
+    d.className = 'sw' + (showClipped && pt.clipped ? ' clipped' : '');
+    d.style.backgroundColor = pt.hex;
+    d.style.minWidth = '8px';
+    el.appendChild(d);
+  });
+}
+
+function renderInfoStrip(ptsOklch, ptsOkluch) {
+  const el = document.getElementById('info-strip');
+  el.innerHTML = '';
+  const n = ptsOklch.length;
+  for (let i = 0; i < n; i++) {
+    const ch = ptsOklch[i], cu = ptsOkluch[i];
+    const cell = document.createElement('div');
+    cell.className = 'info-cell';
+    cell.innerHTML =
+      `<div class="ic-label">t=${(i/(n-1)).toFixed(1)}</div>` +
+      `<div class="ic-row">` +
+        `<span class="ic-val ic-L">L${(ch.L*100).toFixed(0)}</span>` +
+      `</div>` +
+      `<div class="ic-row">` +
+        `<span class="ic-val ic-C" style="color:var(--oklch-col)">C${(ch.C*1000).toFixed(0)}</span>` +
+      `</div>` +
+      `<div class="ic-row">` +
+        `<span class="ic-val ic-C" style="color:var(--okluch-col)">C${(cu.C*1000).toFixed(0)}</span>` +
+      `</div>` +
+      `<div class="ic-row">` +
+        `<span class="ic-val ic-h">${toDeg(ch.h).toFixed(0)}°</span>` +
+      `</div>`;
+    el.appendChild(cell);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  Canvas: ab-plane (focused on Oklch vs Okluch)
+// ═══════════════════════════════════════════════════════
+function drawAbPlane(ptsOklab, ptsOklch, ptsOkluch, canvasId='canvas-ab') {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const W = canvas.offsetWidth || 450;
+  const H = 240;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#1e293b'; ctx.fillRect(0,0,W,H);
+
+  // SV データがあれば範囲に含める
+  const focusPts = [...ptsOklch, ...ptsOkluch];
+  let minA=Infinity,maxA=-Infinity,minB=Infinity,maxB=-Infinity;
+  focusPts.forEach(p=>{ minA=Math.min(minA,p.a); maxA=Math.max(maxA,p.a); minB=Math.min(minB,p.b); maxB=Math.max(maxB,p.b); });
+  const pA=(maxA-minA)*0.15+0.01, pB=(maxB-minB)*0.15+0.01;
+  minA-=pA; maxA+=pA; minB-=pB; maxB+=pB;
+  const rangeA=maxA-minA, rangeB=maxB-minB;
+  const PAD={l:28,r:16,t:16,b:24};
+  const pw=W-PAD.l-PAD.r, ph=H-PAD.t-PAD.b;
+  const sc=Math.min(pw/rangeA, ph/rangeB);
+  const offA=PAD.l+(pw-(rangeA*sc))/2, offB=PAD.t+(ph-(rangeB*sc))/2;
+  function toXY(a,b){ return [offA+(a-minA)*sc, offB+ph-(b-minB)*sc]; }
+
+  ctx.strokeStyle='#263348'; ctx.lineWidth=1;
+  const [ax0,ay0]=toXY(0,minB); ctx.beginPath(); ctx.moveTo(ax0,ay0); ctx.lineTo(ax0,offB); ctx.stroke();
+  const [bx0,by0]=toXY(minA,0); const [bx1]=toXY(maxA,0);
+  if(by0>PAD.t&&by0<PAD.t+ph){ ctx.beginPath(); ctx.moveTo(bx0,by0); ctx.lineTo(bx1,by0); ctx.stroke(); }
+
+  // Oklab（参照・破線）
+  ctx.setLineDash([4,4]); ctx.strokeStyle='rgba(129,140,248,0.35)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ptsOklab.forEach((p,i)=>{ const [x,y]=toXY(p.a,p.b); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); }); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Oklch / Oklch+（実線）
+  ctx.strokeStyle='#34d399'; ctx.lineWidth=2.5;
+  ctx.beginPath(); ptsOklch.forEach((p,i)=>{ const [x,y]=toXY(p.a,p.b); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); }); ctx.stroke();
+  ctx.strokeStyle='#f472b6'; ctx.lineWidth=2.5;
+  ctx.beginPath(); ptsOkluch.forEach((p,i)=>{ const [x,y]=toXY(p.a,p.b); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); }); ctx.stroke();
+  // ドット
+  [[ptsOklch,'#34d399'],[ptsOkluch,'#f472b6']].forEach(([pts,col])=>{
+    pts.forEach((p,i)=>{ const [x,y]=toXY(p.a,p.b); const r=(i===0||i===pts.length-1)?4.5:2.5;
+      ctx.beginPath(); ctx.arc(x,y,r,0,2*Math.PI); ctx.fillStyle=(i===0||i===pts.length-1)?'#f1f5f9':col; ctx.fill(); });
+  });
+
+  const [ex,ey]=toXY(ptsOklch[0].a,ptsOklch[0].b);
+  const [ex2,ey2]=toXY(ptsOklch[ptsOklch.length-1].a,ptsOklch[ptsOklch.length-1].b);
+  ctx.fillStyle='#f1f5f9'; ctx.font='bold 11px IBM Plex Mono,monospace';
+  ctx.fillText('S',ex+5,ey-4); ctx.fillText('E',ex2+5,ey2+12);
+  ctx.fillStyle='#e2e8f0'; ctx.font='11px IBM Plex Mono,monospace';
+  ctx.fillText('a →',W-34,H-4); ctx.fillText('↑ b',4,14);
+
+  const leg=[
+    ['Oklab','rgba(129,140,248,0.5)',true],
+    ['Oklch','#34d399',false],
+    ['Oklch+','#f472b6',false]
+  ];
+  const abLegH = leg.length * 13 + 4;
+  const abLegW = 90;
+  const abLgX  = W - PAD.r - abLegW;
+  const abLgY0 = PAD.t + 2;
+  ctx.fillStyle='rgba(15,23,42,0.75)';
+  ctx.fillRect(abLgX-4, abLgY0-4, abLegW+8, abLegH+8);
+  leg.forEach(([lbl,col,dashed],i)=>{
+    const lx=abLgX,ly=abLgY0+6+i*13; ctx.strokeStyle=col; ctx.lineWidth=dashed?1.5:2;
+    if(dashed) ctx.setLineDash([3,3]); else ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(lx+14,ly); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle='#94a3b8'; ctx.font='9px IBM Plex Mono,monospace'; ctx.fillText(lbl,lx+18,ly+3);
+  });
+}
+
+
+// ═══════════════════════════════════════════════════════
+//  Canvas: C-profile with fill between Oklch/Okluch
+// ═══════════════════════════════════════════════════════
+//  Canvas: C-profile — 3関数比較 + 選択中強調
+// ═══════════════════════════════════════════════════════
+function drawCProfile(labA, labB, ptsOklch, ptsOkluch) {
+  const canvas = document.getElementById('canvas-c');
+  if (!canvas) return;
+  const W = canvas.offsetWidth || 450;
+  const H = 240;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#1e293b';
+  ctx.fillRect(0,0,W,H);
+
+  const PAD={l:36,r:12,t:16,b:28};
+  const pw=W-PAD.l-PAD.r, ph=H-PAD.t-PAD.b;
+
+  // NR最適値（Oklch+）のみ
+  const n = ptsOklch.length;
+  const nrPts = interpOkluch(labA, labB, n, 'nr', NR_PARAM, NR_NEXP);
+
+  const allC = [...ptsOklch, ...nrPts].map(p=>p.C);
+  const maxC = Math.max(...allC) * 1.12;
+
+  function toXY(t,c) {
+    return [PAD.l+t*pw, PAD.t+ph-(c/maxC)*ph];
+  }
+
+  // Grid
+  ctx.strokeStyle='#263348'; ctx.lineWidth=1;
+  [0.25,0.5,0.75].forEach(t=>{
+    const [x]=toXY(t,0);
+    ctx.beginPath(); ctx.moveTo(x,PAD.t); ctx.lineTo(x,PAD.t+ph); ctx.stroke();
+  });
+  [0.5,1.0].forEach(f=>{
+    const [,y]=toXY(0,maxC*f);
+    ctx.beginPath(); ctx.moveTo(PAD.l,y); ctx.lineTo(PAD.l+pw,y); ctx.stroke();
+    ctx.fillStyle='#e2e8f0'; ctx.font='11px IBM Plex Mono,monospace';
+    ctx.fillText((maxC*f*1000).toFixed(0),4,y+3);
+  });
+  ctx.strokeStyle='#475569'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(PAD.l,PAD.t); ctx.lineTo(PAD.l,PAD.t+ph); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(PAD.l,PAD.t+ph); ctx.lineTo(PAD.l+pw,PAD.t+ph); ctx.stroke();
+  ctx.fillStyle='#94a3b8'; ctx.font='10px IBM Plex Mono,monospace';
+  ctx.fillText('C ×10³', PAD.l+4, PAD.t-4);
+  ctx.fillStyle='#e2e8f0'; ctx.font='11px IBM Plex Mono,monospace';
+  ctx.fillText('t=0',PAD.l,H-4);
+  ctx.fillText('t=1',W-28,H-4);
+
+  // Oklch+ (NR opt.) ピンク実線
+  ctx.beginPath();
+  ctx.strokeStyle = 'rgba(244,114,182,0.95)';
+  ctx.lineWidth = 2.5;
+  ctx.setLineDash([]);
+  nrPts.forEach((p,i)=>{
+    const [x,y]=toXY(i/(n-1),p.C);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.strokeStyle='#34d399'; ctx.lineWidth=2;
+  ptsOklch.forEach((p,i)=>{
+    const [x,y]=toXY(i/(n-1),p.C);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  // 中点ΔC
+  const mid=Math.floor(n/2);
+  const [x1,y1]=toXY(mid/(n-1),ptsOklch[mid].C);
+  const [x2,y2]=toXY(mid/(n-1),ptsOkluch[mid].C);
+  ctx.strokeStyle='rgba(255,255,255,0.2)'; ctx.lineWidth=1;
+  ctx.setLineDash([2,2]);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.font='9px IBM Plex Mono,monospace';
+  ctx.fillText(`ΔC=${((ptsOklch[mid].C-ptsOkluch[mid].C)*1000).toFixed(1)}`,(x1+x2)/2+4,(y1+y2)/2+3);
+
+  // C_max 包絡線（1本のみ・モードで色切替）と out-of-gamut シェード
+  const cMaxAtPt = (pt) => gmMode === 'full'
+    ? cMaxFullCached(pt.L, pt.h)
+    : cMaxConservative(pt.L);
+
+  // ── ① out-of-gamut シェード（Oklch+ と C_max の間）赤 ──────
+  ctx.beginPath();
+  nrPts.forEach((pt, i) => {
+    const [cx, cy] = toXY(i / (n - 1), pt.C);
+    i === 0 ? ctx.moveTo(cx, cy) : ctx.lineTo(cx, cy);
+  });
+  for (let i = n - 1; i >= 0; i--) {
+    const pt = nrPts[i];
+    const [cx, cy] = toXY(i / (n - 1), Math.min(pt.C, cMaxAtPt(pt)));
+    ctx.lineTo(cx, cy);
+  }
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(239,68,68,0.18)';
+  ctx.fill();
+
+  // ── ② ソフトクランプ差分シェード（ハードとソフトの間）紫 ──
+  if (gmClampMode === 'soft') {
+    ctx.beginPath();
+    nrPts.forEach((pt, i) => {
+      const Cmax   = cMaxAtPt(pt);
+      const C_hard = Math.min(pt.C, Cmax);
+      const [cx, cy] = toXY(i / (n - 1), C_hard);
+      i === 0 ? ctx.moveTo(cx, cy) : ctx.lineTo(cx, cy);
+    });
+    for (let i = n - 1; i >= 0; i--) {
+      const pt = nrPts[i];
+      const Cmax   = cMaxAtPt(pt);
+      const C_soft = applyNRSoftClamp(pt.C, Cmax, gmNR_n, gmNR_sigma);
+      const [cx, cy] = toXY(i / (n - 1), C_soft);
+      ctx.lineTo(cx, cy);
+    }
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(167,139,250,0.20)';
+    ctx.fill();
+  }
+
+  // ── ③ C_max 包絡線（点線・1本）──────────────────────────────
+  const cmaxCol = gmMode === 'full' ? '#7dd3fc' : '#fbbf24';
+  const cmaxLbl = gmMode === 'full' ? 'gamut limit (L,H)' : 'gamut limit (L only)';
+  ctx.strokeStyle = cmaxCol; ctx.lineWidth = 1.5; ctx.setLineDash([4, 3]);
+  ctx.beginPath();
+  nrPts.forEach((pt, i) => {
+    const [cx, cy] = toXY(i / (n - 1), cMaxAtPt(pt));
+    i === 0 ? ctx.moveTo(cx, cy) : ctx.lineTo(cx, cy);
+  });
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // ── ④ ハードクランプ出力線（白実線）─────────────────────────
+  ctx.strokeStyle = 'rgba(241,245,249,0.75)'; ctx.lineWidth = 1.8; ctx.setLineDash([]);
+  ctx.beginPath();
+  nrPts.forEach((pt, i) => {
+    const C_hard = Math.min(pt.C, cMaxAtPt(pt));
+    const [cx, cy] = toXY(i / (n - 1), C_hard);
+    i === 0 ? ctx.moveTo(cx, cy) : ctx.lineTo(cx, cy);
+  });
+  ctx.stroke();
+
+  // ── ⑤ ソフトクランプ出力線（紫実線）────────────────────────
+  if (gmClampMode === 'soft') {
+    ctx.strokeStyle = '#a78bfa'; ctx.lineWidth = 2.0; ctx.setLineDash([]);
+    ctx.beginPath();
+    nrPts.forEach((pt, i) => {
+      const C_soft = applyNRSoftClamp(pt.C, cMaxAtPt(pt), gmNR_n, gmNR_sigma);
+      const [cx, cy] = toXY(i / (n - 1), C_soft);
+      i === 0 ? ctx.moveTo(cx, cy) : ctx.lineTo(cx, cy);
+    });
+    ctx.stroke();
+  }
+
+  // 凡例
+  const leg = [
+    ['Oklch (ref)',         '#34d399',                  false],
+    ['Oklch+ (NR opt.)',    'rgba(244,114,182,0.95)',    false],
+    ['hard clamp out',      'rgba(241,245,249,0.75)',    false],
+    [cmaxLbl,               cmaxCol,                    true ],
+    ['out-of-gamut',        'rgba(239,68,68,0.5)',       false],
+    ...(gmClampMode === 'soft' ? [
+      ['soft clamp out',    '#a78bfa',                  false],
+      ['hard↔soft diff',   'rgba(167,139,250,0.5)',     false],
+    ] : []),
+  ];
+  const legH = leg.length * 13 + 4;
+  const legW = 130;
+  const lgX  = W - PAD.r - legW;
+  const lgY0 = PAD.t + 2;
+  ctx.fillStyle='rgba(15,23,42,0.75)';
+  ctx.fillRect(lgX-4, lgY0-4, legW+8, legH+8);
+  leg.forEach(([lbl,col,dim],i)=>{
+    const lx=lgX, ly=lgY0+6+i*13;
+    if (lbl === 'out-of-gamut') {
+      // 塗りつぶし四角で表現
+      ctx.fillStyle = col;
+      ctx.fillRect(lx, ly-4, 14, 8);
+    } else {
+      ctx.strokeStyle=col; ctx.lineWidth=dim?1.5:2.5;
+      if(dim) ctx.setLineDash([3,3]); else ctx.setLineDash([]);
+      ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(lx+14,ly); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    ctx.fillStyle=dim?'#64748b':'#94a3b8'; ctx.font='9px IBM Plex Mono,monospace';
+    ctx.fillText(lbl,lx+18,ly+3);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  Presets
+// ═══════════════════════════════════════════════════════
+
+const PRESETS=[
+  {label:'Vivid→Black',  a:'#22cc44',b:'#000000',note:'chroma drop — max hue modulation effect'},
+  {label:'Blue→Yellow',  a:'#0055ff',b:'#ffee00',note:'typical hue shift'},
+  {label:'Cyan→Red',     a:'#00cccc',b:'#dd2200',note:'large hue difference'},
+  {label:'Purple→Orange',a:'#8822ee',b:'#ff8800',note:'passes through low chroma'},
+];
+
+function buildPresets() {
+  const cont=document.getElementById('presets');
+  PRESETS.forEach((pr,idx)=>{
+    const btn=document.createElement('button');
+    btn.className='preset-btn';
+    btn.dataset.idx=idx;
+    btn.innerHTML=
+      `<div class="pdot" style="background:${pr.a}"></div>`+
+      `<span style="color:var(--dim)">→</span>`+
+      `<div class="pdot" style="background:${pr.b}"></div>`+
+      `<span>${pr.label}</span>`;
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('colorA').value = pr.a;
+      document.getElementById('colorB').value = pr.b;
+      document.getElementById('hexA').textContent = pr.a;
+      document.getElementById('hexB').textContent = pr.b;
+      // Presets always use Oklch+ (NR C-axis: σ=0.34, n=0.87)
+      update();
+    });
+    cont.appendChild(btn);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  Main Update
+// ═══════════════════════════════════════════════════════
+
+
+function update() {
+  const hexA  = document.getElementById('colorA').value;
+  const hexB  = document.getElementById('colorB').value;
+  const n     = parseInt(document.getElementById('steps').value);
+  const labA = hexToOklab(hexA), labB = hexToOklab(hexB);
+  const ptsOklab  = interpOklab(labA,labB,n);
+  const ptsOklch  = interpOklch(labA,labB,n);
+  const ptsOkluch = interpOkluch(labA,labB,n,'nr',NR_PARAM,NR_NEXP);
+
+  document.getElementById('hexA').textContent = hexA;
+  document.getElementById('hexB').textContent = hexB;
+  document.getElementById('stepsVal').textContent = n;
+
+  renderSwatches('sw-oklab',  ptsOklab,  false);
+  renderSwatches('sw-oklch',  ptsOklch,  false);
+  renderSwatches('sw-okluch', ptsOkluch, false);
+  renderInfoStrip(ptsOklch,   ptsOkluch);
+  renderGamutMapped(labA, labB, n, 'nr', NR_PARAM, NR_NEXP);
+
+  requestAnimationFrame(()=>{
+    drawAbPlane(ptsOklab, ptsOklch, ptsOkluch);
+    drawCProfile(labA, labB, ptsOklch, ptsOkluch);
+  });
+}
+
+// ── Events ──────────────────────────────────────────────
+['colorA','colorB'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',()=>{
+    document.querySelectorAll('.preset-btn').forEach(b=>b.classList.remove('active'));
+    update();
+  });
+});
+document.getElementById('steps').addEventListener('input', update);
+window.addEventListener('resize', update);
+
+// ── GM クランプ方式切替 ──────────────────────────────────
+document.querySelectorAll('.gm-clamp-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const clamp = btn.dataset.clamp;
+    if (clamp === gmClampMode) return;
+    gmClampMode = clamp;
+    document.querySelectorAll('.gm-clamp-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('gm-nr-params').classList.toggle('visible', gmClampMode === 'soft');
+    update();
+  });
+});
+
+// NR パラメータスライダー
+['n-gm', 'sigma-gm'].forEach(id => {
+  const sl  = document.getElementById(`sl-${id}`);
+  const val = document.getElementById(`val-${id}`);
+  sl.addEventListener('input', () => {
+    const v = parseFloat(sl.value);
+    val.textContent = v.toFixed(id === 'n-gm' ? 1 : 2);
+    if (id === 'n-gm')     gmNR_n     = v;
+    else                   gmNR_sigma = v;
+    if (gmClampMode === 'soft') update();
+  });
+});
+document.querySelectorAll('.gm-mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mode = btn.dataset.mode;
+    if (mode === gmMode) return;
+    gmMode = mode;
+    // ボタンのアクティブ状態を更新
+    document.querySelectorAll('.gm-mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    // 完全実装モードへ切替時はキャッシュ済みデータをそのまま利用（再計算不要）
+    update();
+  });
+});
+
+// ── Init ────────────────────────────────────────────────
+buildPresets();
+document.querySelector('.preset-btn').classList.add('active');
+update();
+update();
+</script>
+</body>
+</html>
