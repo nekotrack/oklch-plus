@@ -46,7 +46,8 @@ Naka-Rushton compression on the chroma axis of OKLCH:
 ```
 L′ = L^α
 C′ = C^n / (C^n + σ^n)
-h′ = h
+h′ = h                          (unchanged; hue weight = C′ implicitly)
+a′ = C′ cos(h),  b′ = C′ sin(h)
 ΔE = √(ΔL′² + Δa′² + Δb′²)   [Oklab Euclidean in transformed space]
 
 Optimal parameters: α=0.73, n=0.87, σ=0.34
