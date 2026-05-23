@@ -13,22 +13,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>oklch-plus — Perceptual Color Research</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg:       #0a0f1e;
-    --surface:  #111827;
-    --surface2: #1a2335;
-    --border:   #1e2d45;
-    --text:     #f1f5f9;
-    --muted:    #94a3b8;
-    --dimmed:   #4b6080;
-    --primary:  #38bdf8;
-    --accent2:  #f472b6;
-    --accent3:  #a78bfa;
-    --accent4:  #34d399;
+    --bg:       oklch(0.090 0.015 264);
+    --surface:  oklch(0.140 0.015 264);
+    --surface2: oklch(0.200 0.020 264);
+    --border:   oklch(0.260 0.020 264);
+    --text:     oklch(0.930 0.010 264);
+    --muted:    oklch(0.600 0.010 264);
+    --dimmed:   oklch(0.380 0.020 264);
+    --primary:  oklch(0.550 0.190 264);
+    --accent2:  oklch(0.720 0.220 340);
+    --accent3:  oklch(0.720 0.180 280);
+    --accent4:  oklch(0.720 0.180 145);
   }
 
   html { scroll-behavior: smooth; }
@@ -36,8 +37,8 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 400;
     line-height: 1.6;
     overflow-x: hidden;
     min-height: 100vh;
@@ -87,7 +88,7 @@
   }
 
   .nav-logo {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 14px;
     font-weight: 500;
     letter-spacing: 0.08em;
@@ -101,7 +102,7 @@
   }
 
   .nav-links a {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 12px;
     font-weight: 400;
     color: var(--muted);
@@ -138,7 +139,7 @@
   }
 
   .hero-label {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 11px;
     font-weight: 400;
     letter-spacing: 0.2em;
@@ -150,25 +151,25 @@
   }
 
   .hero-title {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: clamp(52px, 8vw, 96px);
-    font-weight: 400;
+    font-weight: 700;
     line-height: 1.0;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     max-width: 800px;
     opacity: 0;
     animation: fadeUp 0.8s ease 0.4s forwards;
   }
 
   .hero-title em {
-    font-style: italic;
+    font-style: normal;
     color: var(--primary);
   }
 
   .hero-sub {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 13px;
-    font-weight: 300;
+    font-weight: 400;
     color: var(--muted);
     margin-top: 32px;
     max-width: 560px;
@@ -188,15 +189,15 @@
   .metric-item { }
 
   .metric-val {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 40px;
-    font-weight: 400;
+    font-weight: 700;
     line-height: 1;
     color: var(--text);
   }
 
   .metric-val span {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 13px;
     color: var(--accent4);
     margin-left: 4px;
@@ -204,12 +205,12 @@
   }
 
   .metric-label {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 11px;
     color: var(--dimmed);
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    margin-top: 6px;
+    margin-top: 8px;
   }
 
   /* ── グラデーションデモ ── */
@@ -220,7 +221,7 @@
   }
 
   .grad-label {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 14px;
     font-weight: 500;
     color: var(--text);
@@ -233,11 +234,11 @@
     display: flex;
     gap: 4px;
     align-items: center;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
 
   .grad-tag {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 13px;
     width: 72px;
     flex-shrink: 0;
@@ -247,13 +248,11 @@
   .grad-tag.tag-oklch  { color: #34d399; }
   .grad-tag.tag-oklchp { color: #f472b6; }
   .grad-se {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 10px;
     color: var(--dimmed);
     display: flex;
     justify-content: space-between;
-    width: 400px;
-    max-width: 400px;
     flex: 1;
     padding: 2px 0;
     letter-spacing: 0.08em;
@@ -263,8 +262,18 @@
     height: 40px;
     border-radius: 4px;
     flex: 1;
-    max-width: 400px;
     display: block;
+  }
+
+  .grad-pair {
+    display: flex;
+    gap: 32px;
+    margin-top: 16px;
+  }
+
+  .grad-group {
+    flex: 1;
+    min-width: 0;
   }
 
   /* ── セクション共通 ── */
@@ -276,7 +285,7 @@
   }
 
   .section-label {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 16px;
     font-weight: 500;
     letter-spacing: 0.15em;
@@ -292,7 +301,7 @@
     gap: 1px;
     background: var(--border);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 8px;
     overflow: hidden;
   }
 
@@ -305,7 +314,7 @@
   .result-cell:hover { background: var(--surface2); }
 
   .result-model {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 14px;
     color: var(--text);
     letter-spacing: 0.06em;
@@ -313,9 +322,9 @@
   }
 
   .result-score {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 48px;
-    font-weight: 400;
+    font-weight: 700;
     line-height: 1;
     color: var(--text);
   }
@@ -342,10 +351,10 @@
   .result-bar.ref  { background: var(--primary); }
 
   .result-params {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 13px;
     color: var(--muted);
-    margin-top: 12px;
+    margin-top: 16px;
   }
 
   /* ── ツールカード ── */
@@ -358,7 +367,7 @@
   .tool-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 32px;
     text-decoration: none;
     color: inherit;
@@ -393,7 +402,7 @@
   }
 
   .tool-ver {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 13px;
     color: var(--primary);
     letter-spacing: 0.08em;
@@ -412,14 +421,14 @@
   .tool-ver-dot.pending { background: var(--dimmed); }
 
   .tool-name {
-    font-family: 'Instrument Serif', serif;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 24px;
-    font-weight: 400;
-    margin-bottom: 12px;
+    font-weight: 500;
+    margin-bottom: 16px;
   }
 
   .tool-desc {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 15px;
     color: var(--muted);
     line-height: 1.7;
@@ -433,7 +442,7 @@
   }
 
   .feature-tag {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 12px;
     color: var(--muted);
     background: var(--surface2);
@@ -450,7 +459,7 @@
     gap: 1px;
     background: var(--border);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 8px;
     overflow: hidden;
   }
 
@@ -468,7 +477,7 @@
   .article-item:hover { background: var(--surface2); }
 
   .article-num {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 11px;
     color: var(--dimmed);
     flex-shrink: 0;
@@ -476,7 +485,7 @@
   }
 
   .article-title {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 17px;
     font-weight: 400;
     color: var(--text);
@@ -484,7 +493,7 @@
   }
 
   .article-platform {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 13px;
     color: var(--primary);
     letter-spacing: 0.1em;
@@ -498,13 +507,13 @@
   .method-block {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 32px;
     margin-bottom: 16px;
   }
 
   .method-title {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 16px;
     color: var(--primary);
     letter-spacing: 0.06em;
@@ -512,14 +521,14 @@
   }
 
   .method-formula {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 13px;
     color: var(--muted);
     line-height: 2.0;
     background: var(--surface2);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 20px 24px;
+    padding: 24px;
     white-space: pre;
     overflow-x: auto;
   }
@@ -536,11 +545,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: gap;
+    flex-wrap: wrap;
   }
 
   .footer-left {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 12px;
     color: var(--muted);
     line-height: 1.8;
@@ -552,7 +561,7 @@
   }
 
   .footer-links a {
-    font-family: 'DM Mono', monospace;
+    font-family: 'Noto Sans JP', sans-serif;
     font-size: 11px;
     color: var(--muted);
     text-decoration: none;
@@ -586,6 +595,7 @@
     section { padding: 64px 24px; }
     footer { padding: 32px 24px; flex-direction: column; gap: 24px; }
     .hero-metric { gap: 32px; flex-wrap: wrap; }
+    .grad-pair { flex-direction: column; gap: 24px; }
   }
 </style>
 </head>
@@ -636,40 +646,46 @@
 
     <div class="gradient-demo">
       <p class="grad-label">Gradient interpolation comparison</p>
-      <p class="grad-label" style="margin-top:-4px;margin-bottom:12px"><span style="color:#38bdf8">blue</span> <span style="color:#94a3b8">→</span> <span style="color:#fbbf24">yellow</span></p>
-      <div class="grad-row" style="margin-bottom:2px">
-        <span class="grad-tag"></span>
-        <div class="grad-se"><span>S</span><span>E</span></div>
-      </div>
-      <div class="grad-row">
-        <span class="grad-tag tag-oklab">Oklab</span>
-        <canvas class="grad-canvas" id="grad-oklab" height="40"></canvas>
-      </div><!-- /grad-row -->
-      <div class="grad-row">
-        <span class="grad-tag tag-oklch">Oklch</span>
-        <canvas class="grad-canvas" id="grad-oklch" height="40"></canvas>
-      </div><!-- /grad-row -->
-      <div class="grad-row">
-        <span class="grad-tag tag-oklchp">Oklch+</span>
-        <canvas class="grad-canvas" id="grad-oklchp" height="40"></canvas>
-      </div><!-- /grad-row -->
-      <p class="grad-label" style="margin-top:16px;margin-bottom:12px"><span style="color:#34d399">cyan</span> <span style="color:#94a3b8">→</span> <span style="color:#f472b6">red</span></p>
-      <div class="grad-row" style="margin-bottom:2px">
-        <span class="grad-tag"></span>
-        <div class="grad-se"><span>S</span><span>E</span></div>
-      </div>
-      <div class="grad-row">
-        <span class="grad-tag tag-oklab">Oklab</span>
-        <canvas class="grad-canvas" id="grad-cr-oklab" height="40"></canvas>
-      </div><!-- /grad-row -->
-      <div class="grad-row">
-        <span class="grad-tag tag-oklch">Oklch</span>
-        <canvas class="grad-canvas" id="grad-cr-oklch" height="40"></canvas>
-      </div><!-- /grad-row -->
-      <div class="grad-row">
-        <span class="grad-tag tag-oklchp">Oklch+</span>
-        <canvas class="grad-canvas" id="grad-cr-oklchp" height="40"></canvas>
-      </div><!-- /grad-row -->
+      <div class="grad-pair">
+        <div class="grad-group">
+          <p class="grad-label" style="margin-bottom:16px"><span style="color:#38bdf8">blue</span> <span style="color:#94a3b8">→</span> <span style="color:#fbbf24">yellow</span></p>
+          <div class="grad-row" style="margin-bottom:2px">
+            <span class="grad-tag"></span>
+            <div class="grad-se"><span>S</span><span>E</span></div>
+          </div>
+          <div class="grad-row">
+            <span class="grad-tag tag-oklab">Oklab</span>
+            <canvas class="grad-canvas" id="grad-oklab" height="40"></canvas>
+          </div><!-- /grad-row -->
+          <div class="grad-row">
+            <span class="grad-tag tag-oklch">Oklch</span>
+            <canvas class="grad-canvas" id="grad-oklch" height="40"></canvas>
+          </div><!-- /grad-row -->
+          <div class="grad-row">
+            <span class="grad-tag tag-oklchp">Oklch+</span>
+            <canvas class="grad-canvas" id="grad-oklchp" height="40"></canvas>
+          </div><!-- /grad-row -->
+        </div><!-- /grad-group -->
+        <div class="grad-group">
+          <p class="grad-label" style="margin-bottom:16px"><span style="color:#34d399">cyan</span> <span style="color:#94a3b8">→</span> <span style="color:#f472b6">red</span></p>
+          <div class="grad-row" style="margin-bottom:2px">
+            <span class="grad-tag"></span>
+            <div class="grad-se"><span>S</span><span>E</span></div>
+          </div>
+          <div class="grad-row">
+            <span class="grad-tag tag-oklab">Oklab</span>
+            <canvas class="grad-canvas" id="grad-cr-oklab" height="40"></canvas>
+          </div><!-- /grad-row -->
+          <div class="grad-row">
+            <span class="grad-tag tag-oklch">Oklch</span>
+            <canvas class="grad-canvas" id="grad-cr-oklch" height="40"></canvas>
+          </div><!-- /grad-row -->
+          <div class="grad-row">
+            <span class="grad-tag tag-oklchp">Oklch+</span>
+            <canvas class="grad-canvas" id="grad-cr-oklchp" height="40"></canvas>
+          </div><!-- /grad-row -->
+        </div><!-- /grad-group -->
+      </div><!-- /grad-pair -->
     </div><!-- /gradient-demo -->
   </section><!-- /hero -->
 
@@ -734,6 +750,27 @@
           <span class="feature-tag">Chroma Profile</span>
           <span class="feature-tag">Gamut Mapping</span>
           <span class="feature-tag">NR Soft Clamp</span>
+        </div><!-- /tool-features -->
+      </a><!-- /tool-card -->
+
+      <a href="tools/oklch_color_tool_JISAI.html" class="tool-card">
+        <div class="tool-ver">
+          <span class="tool-ver-dot"></span>
+          Ver. β4 · Available
+        </div><!-- /tool-ver -->
+        <p class="tool-name">時彩 — Color System Generator</p>
+        <p class="tool-desc">
+          2-axis color picker using Scene (Hue) and Time of Day (L/C) to
+          auto-generate an 11-color OKLCH system built on Oklch+.
+          Exports CSS variables, design files, and AI-ready prompt examples.
+        </p>
+        <div class="tool-features">
+          <span class="feature-tag">Color System</span>
+          <span class="feature-tag">情景 × 時間帯</span>
+          <span class="feature-tag">11-color Palette</span>
+          <span class="feature-tag">md / CSS Export</span>
+          <span class="feature-tag">AI Prompt</span>
+          <span class="feature-tag">Research Tab</span>
         </div><!-- /tool-features -->
       </a><!-- /tool-card -->
 

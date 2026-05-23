@@ -13,28 +13,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Oklch+ Color Lab — Ver. 1.0-pub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:        #0f172a;
-  --surface:   #1e293b;
-  --surface2:  #263348;
-  --border:    #334155;
-  --primary:   #38bdf8;
-  --text:      #f1f5f9;
-  --muted:     #94a3b8;   /* 対比比 ≈5:1 Secondary情報 */
-  --dimmed:    #64748b;   /* 対比比 ≈3:1 装飾のみ・文字情報禁止 */
-  --dim:       #64748b;   /* --dimmed の別名（後方互換） */
-  --oklab-col: #818cf8;
-  --oklch-col: #34d399;
-  --oklch-bg:  rgba(52,211,153,0.08);
-  --okluch-col:#f472b6;
-  --okluch-bg: rgba(244,114,182,0.08);
-  --gm-col:   #fbbf24;
-  --gm-bg:    rgba(251,191,36,0.08);
+  --bg:        oklch(0.090 0.015 264);
+  --surface:   oklch(0.140 0.015 264);
+  --surface2:  oklch(0.200 0.020 264);
+  --border:    oklch(0.260 0.020 264);
+  --primary:   oklch(0.550 0.190 264);
+  --text:      oklch(0.930 0.010 264);
+  --muted:     oklch(0.600 0.010 264);  /* 対比比 ≈5:1 Secondary情報 */
+  --dimmed:    oklch(0.380 0.020 264);  /* 対比比 ≈3:1 装飾のみ・文字情報禁止 */
+  --dim:       oklch(0.380 0.020 264);  /* --dimmed の別名（後方互換） */
+  --oklab-col: oklch(0.670 0.150 265);
+  --oklch-col: oklch(0.720 0.180 145);
+  --oklch-bg:  oklch(0.720 0.180 145 / 0.08);
+  --okluch-col:oklch(0.720 0.220 340);
+  --okluch-bg: oklch(0.720 0.220 340 / 0.08);
+  --gm-col:   oklch(0.840 0.150 90);
+  --gm-bg:    oklch(0.840 0.150 90 / 0.08);
   --r: 8px;
-  --mono: 'IBM Plex Mono', monospace;
-  --sans: 'Syne', sans-serif;
+  --mono: 'Noto Sans JP', sans-serif;
+  --sans: 'Noto Sans JP', sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -60,7 +61,7 @@ header {
 }<!-- /header -->
 h1 {
   font-size: 22px;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--primary);
   letter-spacing: -0.5px;
 }
@@ -91,17 +92,17 @@ h1 {
 
 .presets {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
 }<!-- /presets -->
 .preset-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r);
-  padding: 6px 12px;
+  padding: 8px 16px;
   color: var(--muted);
   font-family: var(--mono);
   font-size: 13px;
@@ -121,13 +122,13 @@ h1 {
 .pickers {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   margin-left: auto;
 }<!-- /pickers -->
 .pick-group {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-family: var(--mono);
   font-size: 13px;
   color: var(--muted);
@@ -207,10 +208,10 @@ input[type="color"]::-webkit-color-swatch { border-radius: 5px; border: none; }
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  padding: 0 10px;
+  padding: 0 8px;
   border-left: 2px solid var(--border);
   gap: 2px;
-  min-height: 76px;
+  min-height: 80px;
 }<!-- /model-tag -->
 .model-tag .mname {
   font-size: 13px;
@@ -225,10 +226,10 @@ input[type="color"]::-webkit-color-swatch { border-radius: 5px; border: none; }
 .swatches-wrap {
   flex: 1;
   display: flex;
-  padding: 10px 12px;
+  padding: 8px;
   gap: 3px;
   min-width: 0;
-  height: 76px;
+  height: 80px;
   align-items: stretch;
 }<!-- /swatches-wrap -->
 .sw {
@@ -358,13 +359,13 @@ input[type="color"]::-webkit-color-swatch { border-radius: 5px; border: none; }
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r);
-  padding: 14px;
+  padding: 16px;
 }<!-- /chart-box -->
 .ct-title {
   font-family: var(--mono);
   font-size: 13px;
   color: var(--muted);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   letter-spacing: 0.3px;
 }
 canvas { display: block; width: 100%; }
@@ -435,7 +436,7 @@ canvas { display: block; width: 100%; }
 .gm-gray-area {
   flex: 0 0 200px;
   border-left: 1px solid var(--border);
-  padding: 10px 8px;
+  padding: 8px;
   display: flex;
   align-items: stretch;
 }
@@ -451,7 +452,7 @@ canvas { display: block; width: 100%; }
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  padding: 0 12px;
+  padding: 0 16px;
   border-left: 2px solid var(--border);
   gap: 3px;
 }
@@ -483,7 +484,7 @@ canvas { display: block; width: 100%; }
   border: 1px solid var(--border);
   border-left: 3px solid var(--gm-col);
   border-radius: var(--r);
-  padding: 12px 16px;
+  padding: 16px;
   display: flex;
   gap: 16px;
   align-items: center;
@@ -496,7 +497,7 @@ canvas { display: block; width: 100%; }
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 4px;
-  padding: 4px 12px;
+  padding: 4px 8px;
   white-space: nowrap;
 }
 /* GM モード切替トグル */
@@ -512,7 +513,7 @@ canvas { display: block; width: 100%; }
 .gm-mode-btn {
   font-family: var(--mono);
   font-size: 13px;
-  padding: 4px 14px;
+  padding: 4px 16px;
   border: none;
   background: var(--surface2);
   color: var(--muted);
@@ -533,7 +534,7 @@ canvas { display: block; width: 100%; }
   background: rgba(45,212,191,0.08);
   border: 1px solid rgba(45,212,191,0.25);
   border-radius: 4px;
-  padding: 4px 10px;
+  padding: 4px 8px;
   white-space: nowrap;
   display: none;
 }
@@ -568,7 +569,7 @@ canvas { display: block; width: 100%; }
 .gm-cmp-row.visible { display: flex; }
 .gm-cmp-badge {
   background: var(--surface2); border: 1px solid var(--border);
-  border-radius: 6px; padding: 4px 10px; color: var(--muted);
+  border-radius: 4px; padding: 4px 10px; color: var(--muted);
 }
 .gm-cmp-badge .cmp-label { color: var(--dimmed); margin-right: 4px; }
 .gm-cmp-badge .cmp-val   { color: #f1f5f9; font-weight: 600; }
@@ -1395,9 +1396,9 @@ function drawAbPlane(ptsOklab, ptsOklch, ptsOkluch, canvasId='canvas-ab') {
 
   const [ex,ey]=toXY(ptsOklch[0].a,ptsOklch[0].b);
   const [ex2,ey2]=toXY(ptsOklch[ptsOklch.length-1].a,ptsOklch[ptsOklch.length-1].b);
-  ctx.fillStyle='#f1f5f9'; ctx.font='bold 11px IBM Plex Mono,monospace';
+  ctx.fillStyle='#f1f5f9'; ctx.font='bold 11px Noto Sans JP,sans-serif';
   ctx.fillText('S',ex+5,ey-4); ctx.fillText('E',ex2+5,ey2+12);
-  ctx.fillStyle='#e2e8f0'; ctx.font='11px IBM Plex Mono,monospace';
+  ctx.fillStyle='#e2e8f0'; ctx.font='11px Noto Sans JP,sans-serif';
   ctx.fillText('a →',W-34,H-4); ctx.fillText('↑ b',4,14);
 
   const leg=[
@@ -1415,7 +1416,7 @@ function drawAbPlane(ptsOklab, ptsOklch, ptsOkluch, canvasId='canvas-ab') {
     const lx=abLgX,ly=abLgY0+6+i*13; ctx.strokeStyle=col; ctx.lineWidth=dashed?1.5:2;
     if(dashed) ctx.setLineDash([3,3]); else ctx.setLineDash([]);
     ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(lx+14,ly); ctx.stroke(); ctx.setLineDash([]);
-    ctx.fillStyle='#94a3b8'; ctx.font='9px IBM Plex Mono,monospace'; ctx.fillText(lbl,lx+18,ly+3);
+    ctx.fillStyle='#94a3b8'; ctx.font='9px Noto Sans JP,sans-serif'; ctx.fillText(lbl,lx+18,ly+3);
   });
 }
 
@@ -1458,15 +1459,15 @@ function drawCProfile(labA, labB, ptsOklch, ptsOkluch) {
   [0.5,1.0].forEach(f=>{
     const [,y]=toXY(0,maxC*f);
     ctx.beginPath(); ctx.moveTo(PAD.l,y); ctx.lineTo(PAD.l+pw,y); ctx.stroke();
-    ctx.fillStyle='#e2e8f0'; ctx.font='11px IBM Plex Mono,monospace';
+    ctx.fillStyle='#e2e8f0'; ctx.font='11px Noto Sans JP,sans-serif';
     ctx.fillText((maxC*f*1000).toFixed(0),4,y+3);
   });
   ctx.strokeStyle='#475569'; ctx.lineWidth=1;
   ctx.beginPath(); ctx.moveTo(PAD.l,PAD.t); ctx.lineTo(PAD.l,PAD.t+ph); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(PAD.l,PAD.t+ph); ctx.lineTo(PAD.l+pw,PAD.t+ph); ctx.stroke();
-  ctx.fillStyle='#94a3b8'; ctx.font='10px IBM Plex Mono,monospace';
+  ctx.fillStyle='#94a3b8'; ctx.font='10px Noto Sans JP,sans-serif';
   ctx.fillText('C ×10³', PAD.l+4, PAD.t-4);
-  ctx.fillStyle='#e2e8f0'; ctx.font='11px IBM Plex Mono,monospace';
+  ctx.fillStyle='#e2e8f0'; ctx.font='11px Noto Sans JP,sans-serif';
   ctx.fillText('t=0',PAD.l,H-4);
   ctx.fillText('t=1',W-28,H-4);
 
@@ -1496,7 +1497,7 @@ function drawCProfile(labA, labB, ptsOklch, ptsOkluch) {
   ctx.setLineDash([2,2]);
   ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
   ctx.setLineDash([]);
-  ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.font='9px IBM Plex Mono,monospace';
+  ctx.fillStyle='rgba(255,255,255,0.6)'; ctx.font='9px Noto Sans JP,sans-serif';
   ctx.fillText(`ΔC=${((ptsOklch[mid].C-ptsOkluch[mid].C)*1000).toFixed(1)}`,(x1+x2)/2+4,(y1+y2)/2+3);
 
   // C_max 包絡線（1本のみ・モードで色切替）と out-of-gamut シェード
@@ -1604,7 +1605,7 @@ function drawCProfile(labA, labB, ptsOklch, ptsOkluch) {
       ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(lx+14,ly); ctx.stroke();
       ctx.setLineDash([]);
     }
-    ctx.fillStyle=dim?'#64748b':'#94a3b8'; ctx.font='9px IBM Plex Mono,monospace';
+    ctx.fillStyle=dim?'#64748b':'#94a3b8'; ctx.font='9px Noto Sans JP,sans-serif';
     ctx.fillText(lbl,lx+18,ly+3);
   });
 }

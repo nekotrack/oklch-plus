@@ -1,0 +1,2228 @@
+<!DOCTYPE html>
+<!--
+  時彩 (JISAI) Ver. β4
+  MIT License
+  Copyright (c) 2026 nekotrack
+  https://opensource.org/licenses/MIT
+-->
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-X1Z6C849NS"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-X1Z6C849NS');
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>時彩 — Ver. β4</title>
+  <style>
+    :root {
+      --bg:      #1a1a1a;
+      --surface: #242424;
+      --surf2:   #2e2e2e;
+      --border:  #383838;
+      --text:    #f7f6f2;
+      --muted:   #a8a89e;
+      --dimmed:  #686860;
+      --sky:     #38bdf8;
+      --violet:  #a78bfa;
+      --green:   #4ade80;
+      --orange:  #facc15;
+      --rose:    #f87171;
+      --r: 8px;
+      --mono: 'Courier New', Consolas, monospace;
+      --ff-body: 'Noto Sans JP', -apple-system, 'Helvetica Neue', Arial, sans-serif;
+      --ff-head: 'Anton', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--ff-body);
+      font-weight: 400;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px;
+    }
+    .wrap { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 16px; }
+
+    /* Header */
+    .app-header { display: flex; align-items: baseline; gap: 10px; }
+    .app-header h1 {
+      font-size: 24px; font-weight: 400;
+      font-family: var(--ff-head);
+      letter-spacing: 0.03em;
+      color: var(--text);
+    }
+    .ver { font-size: 13px; color: var(--muted); font-family: var(--mono); }
+
+    /* Panel */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 16px;
+    }
+
+    /* Base input */
+    .binput-row { display: flex; gap: 8px; margin-top: 16px; }
+    .binput {
+      flex: 1; min-width: 0;
+      background: var(--surf2); border: 1px solid var(--border); border-radius: var(--r);
+      color: var(--text); font-size: 13px; font-family: var(--mono);
+      padding: 8px 12px; outline: none; transition: border-color .15s;
+    }
+    .binput::placeholder { color: var(--dimmed); font-size: 12px; }
+    .binput:focus { border-color: var(--sky); }
+    .binput.err { border-color: var(--orange); }
+    .applybtn {
+      background: var(--sky); color: var(--bg); border: none;
+      padding: 8px 16px; border-radius: var(--r); font-size: 14px; font-weight: 600;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .applybtn:hover { opacity: .88; }
+    .bhint { font-size: 13px; margin-top: 6px; min-height: 16px; }
+
+    /* Values */
+    .vrow { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .vrow:last-child { margin-bottom: 0; }
+    .vlbl { font-size: 13px; font-family: var(--mono); width: 54px; flex-shrink: 0; }
+    .vlbl.sky    { color: var(--green); }
+    .vlbl.violet { color: var(--rose);  }
+    .vlbl.muted  { color: var(--muted);  }
+    .vval {
+      flex: 1; font-size: 13px; font-weight: 600; font-family: var(--mono); color: var(--text);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .cpybtn {
+      background: var(--surf2); color: var(--muted);
+      border: 1px solid var(--border); padding: 3px 8px; border-radius: 4px;
+      font-size: 12px; cursor: pointer; flex-shrink: 0;
+      transition: color .15s, border-color .15s;
+    }
+    .cpybtn:hover { color: var(--sky); border-color: var(--sky); }
+    .cpybtn.ok { color: var(--green); border-color: var(--green); }
+    .gbadge { font-size: 12px; font-family: var(--mono); padding: 2px 8px; border-radius: 4px; }
+    .g-srgb { color: var(--green);  background: rgba(74,222,128,.10); }
+    .g-p3   { color: var(--violet); background: rgba(167,139,250,.10); }
+    .g-out  { color: var(--orange); background: rgba(251,146,60,.10);  }
+
+    /* Compare */
+    .cmp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .cmp-half { display: flex; flex-direction: column; gap: 6px; }
+    .cmp-swatch { height: 72px; border-radius: 6px; border: 1px solid var(--border); transition: background .08s; }
+    .cmp-lbl { font-size: 12px; font-weight: 700; font-family: var(--mono); }
+    .cmp-lbl.sky    { color: var(--green); }
+    .cmp-lbl.violet { color: var(--rose);  }
+    .cmp-coords { font-size: 11px; color: var(--muted); font-family: var(--mono); line-height: 1.5; white-space: pre-wrap; }
+
+    /* Research */
+    .res-hd {
+      display: flex; align-items: baseline; justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .res-hd + .res-hd { margin-top: 16px; }
+    .res-hint { font-size: 12px; color: var(--dimmed); font-family: var(--mono); }
+    .lc-canvas-wrap { position: relative; }
+    canvas { display: block; width: 100%; border-radius: 6px; }
+    #lcCanvas { cursor: crosshair; touch-action: none; }
+    .lc-legend {
+      display: flex; gap: 16px; margin-top: 6px;
+      font-size: 11px; font-family: var(--mono); color: var(--dimmed);
+    }
+    .leg-srgb::before { content: '—'; color: rgba(255,255,255,.8); margin-right: 4px; }
+    .leg-p3::before   { content: '—'; color: var(--violet);        margin-right: 4px; }
+    .leg-grid::before { content: '·'; color: var(--violet);        margin-right: 4px; font-size: 14px; }
+    .leg-clip::before { content: '—'; color: #facc15; margin-right: 4px; }
+    .grad-row { display: flex; gap: 8px; align-items: stretch; }
+    .grad-row canvas { flex: 1; min-width: 0; border-radius: 6px; }
+    .grad-side { display: flex; flex-direction: column; width: 52px; flex-shrink: 0; }
+    .grad-lbl {
+      flex: 1; display: flex; align-items: center;
+      font-size: 11px; font-weight: 700; font-family: var(--mono);
+    }
+    .grad-lbl.sky    { color: var(--green); }
+    .grad-lbl.violet { color: var(--rose);  }
+    /* Sliders */
+    .sec-lbl {
+      font-size: 13px; color: var(--text); margin-bottom: 8px;
+      font-family: var(--ff-head); font-weight: 400;
+      letter-spacing: 0.05em;
+    }
+    .res-ttl {
+      font-size: 13px; color: var(--text);
+      font-family: var(--ff-head); font-weight: 400;
+      letter-spacing: 0.05em;
+    }
+    .slbl { font-size: 14px; color: var(--text); font-family: 'Noto Sans JP', sans-serif; }
+    .slbl strong { font-size: 16px; font-weight: 700; font-family: var(--mono); margin-right: 4px; }
+    /* 数値直接入力 */
+    .snum-input {
+      -moz-appearance: textfield; appearance: textfield;
+      background: transparent; border: none;
+      border-bottom: 1px solid transparent;
+      color: var(--text); font-size: 14px; font-weight: 600; font-family: var(--mono);
+      width: 68px; text-align: right; outline: none; cursor: text; padding: 0;
+      transition: border-color .15s;
+    }
+    .snum-input::-webkit-outer-spin-button,
+    .snum-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .snum-input:hover { border-bottom-color: var(--border); }
+    .snum-input:focus { border-bottom-color: var(--sky);    }
+    .swrap { position: relative; height: 24px; display: flex; align-items: center; }
+    .strk  { position: absolute; left: 0; right: 0; height: 6px; border-radius: 3px; pointer-events: none; }
+    input[type=range] {
+      position: relative; width: 100%; height: 24px; background: transparent;
+      -webkit-appearance: none; appearance: none; cursor: pointer; z-index: 1;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+      background: var(--text); border: 2px solid var(--bg);
+      box-shadow: 0 1px 6px rgba(0,0,0,.6); cursor: pointer;
+    }
+    input[type=range]::-moz-range-thumb {
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--text); border: 2px solid var(--bg);
+      box-shadow: 0 1px 6px rgba(0,0,0,.6); cursor: pointer;
+    }
+    input[type=range]::-webkit-slider-runnable-track { background: transparent; }
+    input[type=range]::-moz-range-track             { background: transparent; }
+
+    /* 2段階選択 */
+    .step-row {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 10px; margin-top: 4px;
+    }
+    .step-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--surf2); border: 1px solid var(--border);
+      font-size: 11px; font-weight: 700; font-family: var(--mono);
+      color: var(--text); display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all .2s;
+    }
+    .step-num.done { background: var(--text); border-color: var(--text); color: var(--bg); }
+    .cat-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 6px; margin-bottom: 16px;
+    }
+    .cat-btn {
+      background: var(--surf2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 8px 4px 7px; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      transition: border-color .15s, background .15s;
+    }
+    .cat-btn:hover { border-color: var(--muted); }
+    .cat-btn.on { border-color: var(--text); background: rgba(241,245,249,.06); }
+    .cat-dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(255,255,255,.12); }
+    .cat-name { font-size: 13px; color: var(--text); font-weight: 600; text-align: center; line-height: 1.3; }
+    .cat-sub  { font-size: 12px; color: var(--dimmed); text-align: center; }
+    .cat-hue  { font-size: 11px; color: var(--sky); font-family: var(--mono); }
+    /* 時間帯プレビューストリップ */
+    .strip-hd {
+      display: none; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--dimmed); font-family: var(--mono);
+      margin-bottom: 6px;
+    }
+    .strip-hd::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    /* 常時表示セクションラベル（見本など） */
+    .section-hd {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--dimmed); font-family: var(--mono);
+      margin-top: 12px; margin-bottom: 6px;
+    }
+    .section-hd::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+    .time-strip {
+      display: none; grid-template-columns: repeat(6, 1fr);
+      gap: 6px; margin-bottom: 8px;
+    }
+    .ts-item {
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      cursor: pointer;
+    }
+    .ts-swatch {
+      width: 100%; height: 36px; border-radius: 6px;
+      border: 2px solid transparent;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .ts-item:hover .ts-swatch { border-color: var(--border); }
+    .ts-item.on .ts-swatch {
+      border-color: var(--sky);
+      box-shadow: 0 0 0 1px var(--sky);
+    }
+    .ts-label {
+      font-size: 12px; color: var(--muted);
+      font-family: var(--mono); text-align: center;
+    }
+    .ts-desc {
+      font-size: 11px; color: var(--dimmed);
+      font-family: var(--ff-body); text-align: center; line-height: 1.2;
+    }
+    .ts-item.on .ts-label { color: var(--sky); }
+    .ts-item.on .ts-desc  { color: var(--sky); opacity: 0.7; }
+    .mood-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 6px; margin-bottom: 14px;
+    }
+    .mood-btn {
+      background: var(--surf2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 6px; cursor: pointer;
+      text-align: center; transition: all .15s;
+      opacity: 0.45; pointer-events: none;
+    }
+    .mood-btn.enabled { opacity: 1; pointer-events: auto; }
+    .mood-btn.enabled:hover { border-color: var(--muted); }
+    .mood-btn.on { border-color: var(--sky); background: rgba(56,189,248,.08); opacity: 1; }
+    .mood-name { font-size: 12px; font-weight: 600; color: var(--text); display: block; margin-bottom: 3px; }
+    .mood-sub  { font-size: 12px; color: var(--dimmed); display: block; }
+    .mood-btn.on .mood-name { color: var(--sky); }
+    /* フォント選択 */
+    .font-section { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+    .font-row { display: flex; align-items: stretch; gap: 8px; }
+    .font-row-lbl {
+      font-size: 11px; color: var(--muted); font-family: var(--mono);
+      width: 40px; flex-shrink: 0; display: flex; align-items: center;
+    }
+    .font-opts { display: flex; gap: 5px; flex: 1; }
+    .font-btn {
+      flex: 1; padding: 5px 3px; border-radius: 6px; cursor: pointer;
+      border: 1px solid var(--border); background: var(--surf2);
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      transition: border-color .15s, background .15s;
+    }
+    .font-btn:hover { border-color: var(--muted); }
+    .font-btn.on { border-color: var(--sky); background: rgba(56,189,248,.08); }
+    .font-btn .fb-nm  { font-size: 13px; font-weight: 600; color: var(--text); }
+    .font-btn .fb-sub { font-size: 11px; color: var(--dimmed); }
+    /* フォントプレビュー */
+    .font-preview {
+      padding: 12px 14px; margin-bottom: 14px;
+      background: var(--surf2); border: 1px solid var(--border);
+      border-radius: var(--r);
+    }
+    .fp-head {
+      font-family: var(--ff-head); font-size: var(--fs-preview-head, 18px); font-weight: 400;
+      color: var(--text); margin-bottom: 5px; letter-spacing: .02em;
+    }
+    .fp-body {
+      font-family: var(--ff-body); font-size: var(--fs-preview-body, 13px);
+      color: var(--muted); line-height: 1.65;
+    }
+    .fp-btn-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+    .fp-btn {
+      font-family: var(--ff-body); font-size: var(--fs-preview-body, 13px);
+      font-weight: 700; padding: 6px 18px; border-radius: 6px; border: none;
+      background: var(--sky); color: var(--bg); cursor: default;
+      transition: background .15s;
+    }
+    .fp-btn-lbl { font-size: 12px; color: var(--dimmed); font-family: var(--mono); }
+    .theme-btn-row {
+      display: flex; gap: 8px; margin-bottom: 8px;
+    }
+    #palDark::before {
+      content: ''; display: inline-block;
+      width: 12px; height: 12px; border-radius: 3px;
+      background: #1a1a1a; border: 1px solid rgba(255,255,255,0.25);
+      margin-right: 7px; vertical-align: middle;
+    }
+    #palLight::before {
+      content: ''; display: inline-block;
+      width: 12px; height: 12px; border-radius: 3px;
+      background: #f8fafc; border: 1px solid rgba(0,0,0,0.15);
+      margin-right: 7px; vertical-align: middle;
+    }
+    .theme-note {
+      font-size: 11px; color: var(--orange);
+      font-family: var(--mono); margin-bottom: 10px; margin-top: 4px;
+    }
+    .manual-det {
+      margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px;
+    }
+    .manual-det summary {
+      font-size: 13px; color: var(--dimmed); cursor: pointer;
+      font-family: var(--mono); list-style: none;
+    }
+    .manual-det summary::before { content: '▶ '; font-size: 11px; }
+    .manual-det[open] summary::before { content: '▼ '; }
+    /* パレット */
+    .pal-theme-btn {
+      flex: 1; font-size: 14px; font-family: var(--mono); font-weight: 700;
+      padding: 9px 0; border-radius: 8px; cursor: pointer; text-align: center;
+      border: 1px solid var(--border); background: var(--surf2); color: var(--muted);
+      transition: all .15s;
+    }
+    .pal-theme-btn:hover { border-color: var(--muted); color: var(--text); }
+    .pal-theme-btn.on { color: var(--sky); border-color: var(--sky); background: rgba(56,189,248,.10); }
+    .gen-row { display: flex; margin-bottom: 14px; }
+    .pal-gen-btn {
+      flex: 1; font-size: 13px; font-family: var(--mono); font-weight: 700;
+      padding: 10px 0; border-radius: 8px; cursor: pointer;
+      border: none; background: var(--text); color: var(--bg);
+    }
+    .pal-gen-btn:hover { opacity: .88; }
+    .pal-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 10px; margin-top: 16px; }
+    .pal-sw-wrap { display: flex; flex-direction: column; gap: 3px; }
+    .pal-sw {
+      height: 44px; border-radius: 6px;
+      border: 1px solid rgba(255,255,255,.07); cursor: pointer; position: relative;
+      transition: outline .1s;
+    }
+    .pal-sw:hover::after {
+      content: 'copy'; position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-family: var(--mono); font-weight: 700;
+      color: rgba(255,255,255,.85); background: rgba(0,0,0,.28); border-radius: 6px;
+    }
+    .pal-nm { font-size: 11px; color: var(--dimmed); font-family: var(--mono); text-align: center; }
+    .pal-footer { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .pal-css-btn {
+      background: var(--surf2); color: var(--text);
+      border: 1px solid var(--border); padding: 6px 14px;
+      border-radius: var(--r); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: border-color .15s, color .15s;
+    }
+    .pal-css-btn:hover { border-color: var(--sky); color: var(--sky); }
+    .pal-hint { font-size: 12px; color: var(--dimmed); font-family: var(--mono); }
+    /* プロンプト例 */
+    .prompt-box {
+      margin-top: 12px;
+      background: var(--surf2);
+      border: 1px solid var(--sky);
+      border-radius: var(--r);
+      padding: 12px;
+    }
+    .prompt-box-hd {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .prompt-box-lbl {
+      font-size: 13px; font-weight: 700;
+      color: var(--sky);
+      font-family: var(--ff-head);
+      letter-spacing: .03em;
+    }
+    .prompt-text {
+      font-size: 13px; color: var(--text);
+      font-family: 'Noto Sans JP', sans-serif;
+      line-height: 1.7; white-space: pre-wrap; word-break: break-all;
+    }
+    .prompt-hint {
+      font-size: 11px; color: var(--dimmed);
+      font-family: var(--mono); margin-top: 8px;
+    }
+    .prompt-cpy-btn {
+      font-size: 14px; font-weight: 700;
+      padding: 8px 20px; border-radius: var(--r);
+      border: none; background: var(--text); color: var(--bg);
+      cursor: pointer; transition: opacity .15s; flex-shrink: 0;
+    }
+    .prompt-cpy-btn:hover { opacity: .85; }
+    .prompt-cpy-btn.ok { background: var(--green); }
+    .rot-btn {
+      font-size: 12px; font-family: var(--mono); font-weight: 700;
+      padding: 4px 12px; border-radius: 6px; cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surf2); color: var(--muted);
+      transition: color .15s, border-color .15s, background .15s;
+    }
+    .rot-btn:hover { border-color: var(--orange); color: var(--orange); }
+    .rot-btn.on {
+      color: var(--bg); border-color: transparent; font-weight: 700;
+      animation: hue-shift 2.4s linear infinite;
+    }
+    @keyframes hue-shift {
+      0%   { background: oklch(0.63 0.20 20);  }
+      17%  { background: oklch(0.65 0.18 80);  }
+      33%  { background: oklch(0.62 0.17 145); }
+      50%  { background: oklch(0.63 0.17 220); }
+      67%  { background: oklch(0.60 0.17 270); }
+      83%  { background: oklch(0.62 0.19 305); }
+      100% { background: oklch(0.63 0.20 20);  }
+    }
+    /* ツールチップ */
+    .lc-canvas-wrap { position: relative; }
+    .lc-tooltip {
+      position: absolute; pointer-events: none;
+      background: rgba(15,23,42,0.88); border: 1px solid var(--border);
+      border-radius: 6px; padding: 6px 10px;
+      font-size: 11px; font-family: var(--mono); color: var(--text);
+      line-height: 1.6; white-space: nowrap;
+      opacity: 0; transition: opacity .1s;
+    }
+    .lc-tooltip.show { opacity: 1; }
+    /* 補正インジケーター */
+    .corr-panel {
+      margin-top: 10px; display: flex; flex-direction: column; gap: 6px;
+    }
+    .corr-row { display: flex; align-items: center; gap: 8px; }
+    .corr-lbl { font-size: 12px; font-family: var(--mono); color: var(--muted); width: 56px; flex-shrink: 0; }
+    .corr-val { font-size: 12px; font-family: var(--mono); color: var(--text); width: 80px; flex-shrink: 0; }
+    .corr-bar-wrap { flex: 1; height: 4px; background: var(--surf2); border-radius: 2px; overflow: hidden; }
+    .corr-bar { display: block; height: 100%; border-radius: 2px; transition: width .15s; }
+    .corr-bar.sky    { background: var(--sky);    }
+    .corr-bar.violet { background: var(--violet); }
+    .corr-bar.green  { background: var(--green);  }
+    .corr-pct {
+      font-size: 11px; font-family: var(--mono);
+      color: var(--muted); width: 36px; flex-shrink: 0; text-align: right;
+    }
+    .corr-note {
+      font-size: 11px; color: var(--orange); font-family: var(--mono);
+      margin-top: 2px; min-height: 14px;
+    }
+    /* サンプリング比較凡例 */
+    .strip-legend {
+      font-size: 11px; color: var(--dimmed); font-family: var(--mono);
+      margin-top: 5px; line-height: 1.5;
+    }
+    .res-cpy-btn {
+      font-size: 13px; font-family: var(--mono); font-weight: 700;
+      padding: 6px 16px; border-radius: 6px; cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surf2); color: var(--muted);
+      transition: color .15s, border-color .15s;
+    }
+    .res-cpy-btn:hover { color: var(--sky); border-color: var(--sky); }
+    .res-cpy-btn.ok   { color: var(--green); border-color: var(--green); }
+    .gm-btn {
+      font-size: 11px; font-family: var(--mono); font-weight: 600;
+      padding: 2px 8px; border-radius: 4px; cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surf2); color: var(--muted);
+      transition: color .15s, border-color .15s, background .15s;
+      white-space: nowrap;
+    }
+    .gm-btn.on {
+      color: var(--sky); border-color: var(--sky);
+      background: rgba(56,189,248,.10);
+    }
+    footer { font-size: 13px; color: var(--text); text-align: center; padding-top: 8px; }
+    /* 固定スライダーフッター */
+    body { padding-bottom: 148px; }
+    .slider-footer {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      background: rgba(30,41,59,0.97);
+      border-top: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      padding: 10px 16px 14px;
+    }
+    .sf-inner {
+      max-width: 480px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    /* PC レスポンシブ */
+    @media (min-width: 600px) {
+      .wrap, .sf-inner { max-width: 560px; }
+    }
+    @media (min-width: 900px) {
+      .wrap, .sf-inner { max-width: 640px; }
+    }
+    @media (min-width: 1280px) {
+      .wrap, .sf-inner { max-width: 720px; }
+    }
+    .sf-group {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .sf-lbl {
+      font-size: 13px; color: var(--text);
+      display: flex; align-items: center; gap: 6px;
+      width: 130px; flex-shrink: 0;
+    }
+    .sf-lbl strong { font-size: 15px; font-weight: 700; font-family: var(--mono); }
+    .sf-group .swrap { flex: 1; height: 20px; }
+    .sf-group .snum-input { width: 58px; }
+    .sf-top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .sf-color-label {
+      font-size: 12px; font-weight: 600; font-family: var(--mono);
+      color: var(--sky); letter-spacing: .02em;
+    }
+    .res-values {
+      margin-top: 12px; padding-top: 12px;
+      border-top: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    /* ボタン共通：フォント選択の影響を受けない */
+    button, .cpybtn, .res-cpy-btn, .applybtn,
+    .cat-btn, .mood-btn, .font-btn,
+    .pal-theme-btn, .pal-gen-btn, .pal-css-btn,
+    .gm-btn {
+      font-family: 'Noto Sans JP', system-ui, sans-serif;
+    }
+    .tab-btn { font-family: var(--ff-head); }
+    .tab-bar {
+      display: flex; gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+    .tab-btn {
+      padding: 9px 20px; font-size: 14px; font-weight: 600;
+      background: transparent; border: none; border-bottom: 2px solid transparent;
+      color: var(--text); cursor: pointer; margin-bottom: -1px;
+      transition: color .15s, border-color .15s;
+    }
+    .tab-btn.on { color: var(--text); border-bottom-color: var(--sky); }
+    .t-research { display: none; }
+    .wrap.tab-r .t-main     { display: none; }
+    .wrap.tab-r .t-research { display: block; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="app-header">
+    <h1>時彩</h1>
+    <span class="ver">Ver. β4</span>
+  </header><!-- /app-header -->
+
+  <div class="tab-bar">
+    <button class="tab-btn on" data-tab="main">COLOR + PALETTE</button>
+    <button class="tab-btn"    data-tab="research">RESEARCH</button>
+  </div><!-- /tab-bar -->
+
+  <!-- ══ Tab: 色選択 + パレット ══ -->
+  <div class="panel t-main">
+
+    <!-- Step 1 -->
+    <div class="step-row">
+      <span class="step-num" id="sn1">1</span>
+      <span class="sec-lbl" style="margin:0">情景を選ぶ</span>
+    </div><!-- /step-row -->
+    <div class="cat-grid" id="catGrid"></div><!-- /cat-grid -->
+    <!-- Step 2 -->
+    <div class="step-row" style="margin-top:8px">
+      <span class="step-num" id="sn2">2</span>
+      <span class="sec-lbl" style="margin:0">時間帯を選ぶ</span>
+    </div><!-- /step-row -->
+    <div class="time-strip" id="timeStrip"></div><!-- /timeStrip -->
+
+    <!-- ベースカラー直接入力（カテゴリの代替） -->
+    <details class="manual-det" id="manualDet">
+      <summary>ベースカラーを直接入力（HEX または oklch()）</summary>
+      <div class="binput-row" style="margin-top:8px">
+        <input class="binput" type="text" id="binput"
+               placeholder="HEX または oklch() 形式で入力">
+        <button class="applybtn" id="applybtn">適用</button>
+      </div><!-- /binput-row -->
+      <p class="bhint" id="bhint"></p>
+    </details><!-- /manual-det -->
+
+    <!-- Step 3: 背景テーマ選択 -->
+    <div class="step-row" style="margin-top:24px">
+      <span class="step-num" id="sn3">3</span>
+      <span class="sec-lbl" style="margin:0">背景テーマを選ぶ</span>
+    </div><!-- /step-row -->
+    <div class="theme-btn-row">
+      <button class="pal-theme-btn on" id="palDark">Dark</button>
+      <button class="pal-theme-btn"    id="palLight">Light</button>
+    </div><!-- /theme-btn-row -->
+    <!-- パレット生成 -->
+    <div class="gen-row">
+      <button class="pal-gen-btn" id="palGenBtn">パレットを生成</button>
+    </div><!-- /gen-row -->
+
+    <!-- フォント設定（折りたたみ） -->
+    <details class="manual-det" id="fontDet">
+      <summary>フォント・サイズ設定を開く</summary>
+      <div class="font-section" style="margin-top:12px">
+        <div class="font-row">
+          <span class="font-row-lbl">本文</span>
+          <div class="font-opts" id="fontBodyOpts"></div>
+        </div><!-- /font-row -->
+        <div class="font-row">
+          <span class="font-row-lbl">見出し</span>
+          <div class="font-opts" id="fontHeadOpts"></div>
+        </div><!-- /font-row -->
+        <div class="font-row">
+          <span class="font-row-lbl">サイズ</span>
+          <div class="font-opts" id="fontSizeOpts"></div>
+        </div><!-- /font-row -->
+      </div><!-- /font-section -->
+    </details><!-- /fontDet -->
+
+    <!-- パレット表示 -->
+    <div class="pal-grid" id="palGrid"></div><!-- /pal-grid -->
+    <div class="pal-footer" id="palFooter" style="display:none">
+      <button class="pal-css-btn" id="palCssBtn">md を書き出し</button>
+      <button class="pal-css-btn" id="palCopyBtn">CSS をコピー</button>
+      <span class="pal-hint">md → AI ツール　CSS → コードに直接貼る</span>
+    </div><!-- /pal-footer -->
+
+    <!-- フォントプレビュー（常時表示） -->
+    <div class="section-hd">見本</div>
+    <div class="font-preview">
+      <div class="fp-head">時彩 / 見出し</div>
+      <div class="fp-body">色を選んで、雰囲気を決める。<br>The quick brown fox jumps.</div>
+      <div class="fp-btn-row">
+        <button class="fp-btn" id="fpBtn">Sample</button>
+        <span class="fp-btn-lbl" id="fpBtnLbl">メインボタン</span>
+      </div><!-- /fp-btn-row -->
+    </div><!-- /font-preview -->
+
+    <!-- プロンプト例 -->
+    <div class="prompt-box" id="promptBox" style="display:none">
+      <div class="prompt-box-hd">
+        <span class="prompt-box-lbl">AI ツールへ貼るプロンプト例</span>
+        <button class="cpybtn prompt-cpy-btn" id="promptCopyBtn">copy</button>
+      </div><!-- /prompt-box-hd -->
+      <pre class="prompt-text" id="promptText"></pre>
+      <p class="prompt-hint">✦ 仕上がりのイメージは見本欄で確認できます</p>
+    </div><!-- /prompt-box -->
+
+  </div><!-- /panel guide -->
+
+  <!-- 比較パネル -->
+  <div class="panel t-main">
+    <div class="cmp-grid">
+      <div class="cmp-half">
+        <div class="cmp-swatch" id="cmpA"></div><!-- /cmp-swatch A -->
+        <div class="cmp-lbl sky">OKLCH</div>
+        <div class="cmp-coords" id="cmpAcoords"></div>
+        <span class="gbadge g-srgb" id="cmpAgamut">● sRGB</span>
+      </div><!-- /cmp-half A -->
+      <div class="cmp-half">
+        <div class="cmp-swatch" id="cmpB"></div><!-- /cmp-swatch B -->
+        <div class="cmp-lbl violet">OKLCH+</div>
+        <div class="cmp-coords" id="cmpBcoords"></div>
+        <span class="gbadge g-srgb" id="cmpBgamut">● sRGB</span>
+      </div><!-- /cmp-half B -->
+    </div><!-- /cmp-grid -->
+  </div><!-- /panel compare -->
+
+  <!-- ══ Tab: 研究 ══ -->
+  <div class="panel t-research" id="resPanel">
+    <!-- L-C ガマット断面 -->
+    <div class="res-hd">
+      <span class="res-ttl">L–C ガマット（色域断面）</span>
+      <button class="rot-btn" id="rotBtn3">色相 H 回転</button>
+      <span class="res-hint" id="hDisp">h = 55.0°</span>
+    </div><!-- /res-hd -->
+    <div class="lc-canvas-wrap">
+      <canvas id="lcCanvas"></canvas>
+      <div class="lc-tooltip" id="lcTooltip"></div>
+    </div><!-- /lc-canvas-wrap -->
+    <div class="lc-legend">
+      <span class="leg-srgb">sRGB境界</span>
+      <span class="leg-p3">P3境界</span>
+      <span class="leg-grid">Oklch+ グリッド</span>
+      <span class="leg-clip">CSS clip(sRGB)</span>
+    </div><!-- /lc-legend -->
+
+    <!-- 現在の色の値 -->
+    <div class="res-values">
+      <div class="vrow">
+        <span class="vlbl sky">oklch</span>
+        <span class="vval" id="vOklch">—</span>
+        <button class="res-cpy-btn" id="resOklchCopyBtn">copy</button>
+      </div><!-- /vrow oklch -->
+      <div class="vrow">
+        <span class="vlbl violet">oklch+</span>
+        <span class="vval" id="vPlus">—</span>
+      </div><!-- /vrow plus -->
+      <div class="vrow">
+        <span class="vlbl muted">hex</span>
+        <span class="vval" id="vHex">—</span>
+      </div><!-- /vrow hex -->
+      <div class="vrow" style="margin-bottom:0">
+        <span class="vlbl muted">gamut</span>
+        <span class="gbadge g-srgb" id="vGamut">● sRGB</span>
+      </div><!-- /vrow gamut -->
+    </div><!-- /res-values -->
+    <div class="corr-panel" id="corrPanel">
+      <div class="corr-row">
+        <span class="corr-lbl">明度補正</span>
+        <span class="corr-val" id="corrL">—</span>
+        <span class="corr-bar-wrap"><span class="corr-bar sky" id="corrBarL"></span></span>
+        <span class="corr-pct" id="corrLpct"></span>
+      </div><!-- /corr-row -->
+      <div class="corr-row">
+        <span class="corr-lbl">彩度変換</span>
+        <span class="corr-val" id="corrC">—</span>
+        <span class="corr-bar-wrap"><span class="corr-bar violet" id="corrBarC"></span></span>
+        <span class="corr-pct" id="corrCpct"></span>
+      </div><!-- /corr-row -->
+      <div class="corr-row">
+        <span class="corr-lbl">ガマット余裕</span>
+        <span class="corr-val" id="corrRoom">—</span>
+        <span class="corr-bar-wrap"><span class="corr-bar green" id="corrBarRoom"></span></span>
+      </div><!-- /corr-row -->
+      <p class="corr-note" id="corrNote"></p>
+    </div><!-- /corr-panel -->
+
+    <!-- 等間隔サンプリング比較 -->
+    <div class="res-hd" style="margin-top:16px">
+      <span class="res-ttl">等間隔サンプリング比較</span>
+      <span style="display:flex;align-items:center;gap:8px">
+        <span class="res-hint" id="lcDisp">L=0.650  h=55.0°</span>
+        <button class="gm-btn on" id="gmBtn">GM on</button>
+      </span>
+    </div><!-- /res-hd -->
+    <div class="grad-row">
+      <canvas id="gradCanvas"></canvas>
+      <div class="grad-side">
+        <span class="grad-lbl sky">OKLCH</span>
+        <span class="grad-lbl violet">OKLCH+</span>
+      </div><!-- /grad-side -->
+    </div><!-- /grad-row -->
+    <p class="strip-legend">← 無彩色 &nbsp;｜&nbsp; 実線 = 現在のC位置 &nbsp;｜&nbsp; 破線 = sRGBの限界 &nbsp;｜&nbsp; 最大彩度 →</p>
+  </div><!-- /panel research -->
+
+  <!-- スライダー固定フッター（両タブで常時表示） -->
+  <div class="slider-footer" id="sliderFooter">
+    <div class="sf-inner">
+      <div class="sf-top">
+        <span class="sf-color-label" id="sfColorLabel">カスタムカラー</span>
+      </div><!-- /sf-top -->
+      <div class="sf-group">
+        <span class="sf-lbl"><strong>L</strong></span>
+        <div class="swrap"><div class="strk" id="trkL"></div>
+          <input type="range" id="sL" min="0" max="1" step="0.001" value="0.65"></div><!-- /swrap -->
+        <input type="number" class="snum-input" id="nL" value="0.650" min="0" max="1" step="0.001">
+      </div><!-- /sf-group L -->
+      <div class="sf-group">
+        <span class="sf-lbl"><strong>C</strong></span>
+        <div class="swrap"><div class="strk" id="trkC"></div>
+          <input type="range" id="sC" min="0" max="0.4" step="0.001" value="0.15"></div><!-- /swrap -->
+        <input type="number" class="snum-input" id="nC" value="0.150" min="0" max="0.4" step="0.001">
+      </div><!-- /sf-group C -->
+      <div class="sf-group">
+        <span class="sf-lbl"><strong>h</strong>
+          <button class="rot-btn" id="rotBtn">色相 H 回転</button>
+        </span>
+        <div class="swrap"><div class="strk" id="trkH"></div>
+          <input type="range" id="sH" min="0" max="360" step="0.1" value="55"></div><!-- /swrap -->
+        <input type="number" class="snum-input" id="nH" value="55.0" min="0" max="360" step="0.1">
+      </div><!-- /sf-group H -->
+    </div><!-- /sf-inner -->
+  </div><!-- /slider-footer -->
+
+  <footer style="margin-bottom: 148px">© 2026 nekotrack</footer>
+
+</div><!-- /wrap -->
+
+<script>
+'use strict';
+
+// ── Oklch+ パラメータ ─────────────────────────────────────────────────────────
+const OP_A = 0.73, OP_N = 0.87, OP_S = 0.34;
+const OP_SN = Math.pow(OP_S, OP_N);
+
+function cPrimeToPhysC(Cp) {
+  if (Cp <= 0) return 0;
+  const v = Math.min(Cp, 0.9999);
+  return Math.pow(Math.max(0, v * OP_SN / (1 - v)), 1 / OP_N);
+}
+function toPlus(L, C) {
+  const Lp = Math.pow(Math.max(0, L), OP_A);
+  const Cn = Math.pow(Math.max(0, C), OP_N);
+  return { Lp, Cp: Cn / (Cn + OP_SN) };
+}
+function fromPlus(Lp, Cp) {
+  return {
+    L: Math.pow(Math.max(0, Math.min(1, Lp)), 1 / OP_A),
+    C: cPrimeToPhysC(Math.max(0, Cp))
+  };
+}
+
+// ── 色変換 ────────────────────────────────────────────────────────────────────
+function oklchToLin(L, C, h) {
+  const r = h * Math.PI / 180;
+  const a = C * Math.cos(r), b = C * Math.sin(r);
+  const l_ = L + 0.3963377774*a + 0.2158037573*b;
+  const m_ = L - 0.1055613458*a - 0.0638541728*b;
+  const s_ = L - 0.0894841775*a - 1.2914855480*b;
+  const l=l_**3, m=m_**3, s=s_**3;
+  return [
+     4.0767416621*l - 3.3077115913*m + 0.2309699292*s,
+    -1.2684380046*l + 2.6097574011*m - 0.3413193965*s,
+    -0.0041960863*l - 0.7034186147*m + 1.7076147010*s,
+  ];
+}
+function linToSRGB(c) {
+  if (c <= 0) return 0; if (c >= 1) return 1;
+  return c <= 0.0031308 ? 12.92*c : 1.055*c**(1/2.4)-0.055;
+}
+function inSRGB(lin) { return lin.every(c => c >= -0.001 && c <= 1.001); }
+function linToP3(r, g, b) {
+  const X=0.4123908*r+0.3575843*g+0.1804808*b;
+  const Y=0.2126390*r+0.7151687*g+0.0721923*b;
+  const Z=0.0193308*r+0.1191948*g+0.9505321*b;
+  return [2.4934969*X-0.9313836*Y-0.4027108*Z,
+         -0.8294890*X+1.7626641*Y+0.0236247*Z,
+          0.0358458*X-0.0761724*Y+0.9568845*Z];
+}
+function inP3(lin) { return inSRGB(linToP3(...lin)); }
+function gamutLevel(lin) {
+  if (inSRGB(lin)) return 'srgb';
+  return inP3(lin) ? 'p3' : 'out';
+}
+function gamutMap(L, C, h) {
+  const lin = oklchToLin(L, C, h);
+  const lv  = gamutLevel(lin);
+  if (lv === 'srgb') return { Cm:C, lv, hex:toHex(lin.map(linToSRGB)) };
+  let lo=0, hi=C;
+  for (let i=0; i<32; i++) {
+    const mid=(lo+hi)/2;
+    inSRGB(oklchToLin(L,mid,h)) ? (lo=mid) : (hi=mid);
+  }
+  return { Cm:lo, lv, hex:toHex(oklchToLin(L,lo,h).map(linToSRGB)) };
+}
+function toHex(rgb) {
+  return '#'+rgb.map(c=>Math.round(Math.max(0,Math.min(1,c))*255)
+    .toString(16).padStart(2,'0')).join('').toUpperCase();
+}
+
+// ── ベースカラー解析 ──────────────────────────────────────────────────────────
+function hexToOklch(hex) {
+  if (hex.length === 3) hex = hex.split('').map(c=>c+c).join('');
+  if (hex.length !== 6) return null;
+  const r=parseInt(hex.slice(0,2),16)/255;
+  const g=parseInt(hex.slice(2,4),16)/255;
+  const b=parseInt(hex.slice(4,6),16)/255;
+  const tl = c => c <= 0.04045 ? c/12.92 : ((c+0.055)/1.055)**2.4;
+  const rl=tl(r), gl=tl(g), bl=tl(b);
+  const l_=(0.4122214708*rl+0.5363325363*gl+0.0514459929*bl)**(1/3);
+  const m_=(0.2119034982*rl+0.6806995451*gl+0.1073969566*bl)**(1/3);
+  const s_=(0.0883024619*rl+0.2817188376*gl+0.6299787005*bl)**(1/3);
+  const L= 0.2104542553*l_+0.7936177850*m_-0.0040720468*s_;
+  const a= 1.9779984951*l_-2.4285922050*m_+0.4505937099*s_;
+  const bv=0.0259040371*l_+0.7827717662*m_-0.8086757660*s_;
+  const C=Math.sqrt(a*a+bv*bv);
+  let h=Math.atan2(bv,a)*180/Math.PI;
+  if (h<0) h+=360;
+  return {L, C, h};
+}
+function parseColor(str) {
+  str = str.trim();
+  const hx = str.match(/^#?([0-9a-fA-F]{3,6})$/);
+  if (hx) return hexToOklch(hx[1]);
+  const m = str.match(/oklch\(\s*([\d.]+)(%?)\s+([\d.]+)\s+([\d.]+)/i);
+  if (m) {
+    let L=parseFloat(m[1]); if(m[2]==='%') L/=100;
+    return {L, C:parseFloat(m[3]), h:parseFloat(m[4])};
+  }
+  return null;
+}
+
+// ── DOM refs ──────────────────────────────────────────────────────────────────
+const vOklch   = document.getElementById('vOklch');
+const vPlus    = document.getElementById('vPlus');
+const vHex     = document.getElementById('vHex');
+const vGamut   = document.getElementById('vGamut');
+const cmpA     = document.getElementById('cmpA');
+const cmpB     = document.getElementById('cmpB');
+const cmpAc    = document.getElementById('cmpAcoords');
+const cmpBc    = document.getElementById('cmpBcoords');
+const cmpAg    = document.getElementById('cmpAgamut');
+const cmpBg    = document.getElementById('cmpBgamut');
+const binput   = document.getElementById('binput');
+const applybtn = document.getElementById('applybtn');
+const bhint    = document.getElementById('bhint');
+const hDisp    = document.getElementById('hDisp');
+const lcDisp   = document.getElementById('lcDisp');
+const nL = document.getElementById('nL');
+const nC = document.getElementById('nC');
+const nH = document.getElementById('nH');
+const sL = document.getElementById('sL');
+const sC = document.getElementById('sC');
+const sH = document.getElementById('sH');
+const trkL = document.getElementById('trkL');
+const trkC = document.getElementById('trkC');
+const trkH = document.getElementById('trkH');
+
+// ── 状態 ──────────────────────────────────────────────────────────────────────
+let AFRAME = null;
+let GM_ON  = true;
+let LC_CACHE = { h: null, imgData: null };
+
+const gmBtn = document.getElementById('gmBtn');
+gmBtn.addEventListener('click', function() {
+  GM_ON = !GM_ON;
+  gmBtn.textContent = GM_ON ? 'GM on' : 'GM off';
+  gmBtn.classList.toggle('on', GM_ON);
+  render();
+});
+
+// ── ガマットバッジ ────────────────────────────────────────────────────────────
+function badge(el, lv, Cm, Corg) {
+  if (lv === 'srgb') {
+    el.className = 'gbadge g-srgb';
+    el.textContent = '● sRGB';
+  } else if (lv === 'p3') {
+    el.className = 'gbadge g-p3';
+    el.textContent = Corg != null
+      ? '◆ P3域  表示C: ' + Cm.toFixed(3) + '（元: ' + Corg.toFixed(3) + '）'
+      : '◆ P3  C:' + Cm.toFixed(3);
+  } else {
+    el.className = 'gbadge g-out';
+    el.textContent = Corg != null
+      ? '⚠ Out  表示C: ' + Cm.toFixed(3) + '（元: ' + Corg.toFixed(3) + '）'
+      : '⚠ Out  C:' + Cm.toFixed(3);
+  }
+}
+
+// ── メインレンダリング ────────────────────────────────────────────────────────
+function render() {
+  const L = parseFloat(sL.value);
+  const C = parseFloat(sC.value);
+  const h = parseFloat(sH.value);
+
+  // 数値入力を同期
+  nL.value = L.toFixed(3);
+  nC.value = C.toFixed(3);
+  nH.value = h.toFixed(1);
+
+  const { Cm, lv, hex } = gamutMap(L, C, h);
+  const { Lp, Cp } = toPlus(L, C);
+
+  vOklch.textContent = `oklch(${L.toFixed(3)} ${C.toFixed(3)} ${h.toFixed(1)})`;
+  vPlus.textContent  = `L′=${Lp.toFixed(3)}  C′=${Cp.toFixed(3)}  h=${h.toFixed(1)}°`;
+  vHex.textContent   = hex;
+  badge(vGamut, lv, Cm, C);
+
+  // ガマット境界C（キャッシュ付き）
+  if (!render._mc || render._mc.L !== L || render._mc.h !== h) {
+    let lo=0, hi=0.4;
+    if (inSRGB(oklchToLin(L, 0.001, h))) {
+      for (let i=0; i<24; i++) {
+        const mid=(lo+hi)/2;
+        inSRGB(oklchToLin(L, mid, h)) ? (lo=mid) : (hi=mid);
+      }
+    }
+    render._mc = { L, h, maxC: lo };
+  }
+  const boundC  = render._mc.maxC;
+  const maxCp   = toPlus(L, boundC).Cp;
+  const room    = maxCp - Cp;
+  const roomDisp = Math.max(0, room).toFixed(3);
+  const isOver   = room < -0.001;
+  const pctL = L > 0 ? Math.round((Lp - L) / L * 100) : 0;
+  const pctC = C > 0 ? Math.round((Cp - C) / C * 100) : 0;
+
+  const corrRoomEl  = document.getElementById('corrRoom');
+  const corrBarRoom = document.getElementById('corrBarRoom');
+  corrRoomEl.textContent         = roomDisp;
+  corrRoomEl.style.color         = isOver ? 'var(--orange)' : '';
+  corrBarRoom.style.width        = isOver ? '0%' : `${Math.min(100, room / 0.4 * 100)}%`;
+  corrBarRoom.style.background   = isOver ? 'var(--orange)' : '';
+
+  document.getElementById('corrL').textContent =
+    'L ' + L.toFixed(3) + ' → L\u2032 ' + Lp.toFixed(3);
+  document.getElementById('corrC').textContent =
+    'C ' + C.toFixed(3) + ' → C\u2032 ' + Cp.toFixed(3);
+  document.getElementById('corrLpct').textContent =
+    (pctL >= 0 ? '+' : '') + pctL + '%';
+  document.getElementById('corrCpct').textContent =
+    (pctC >= 0 ? '+' : '') + pctC + '%';
+  document.getElementById('corrBarL').style.width    = `${Math.min(100, Lp * 100)}%`;
+  document.getElementById('corrBarC').style.width    = `${Math.min(100, Cp / 0.75 * 100)}%`;
+  document.getElementById('corrNote').textContent    = '';
+
+  // 比較パネル — 両座標系を併記
+  cmpA.style.background = `oklch(${L} ${C} ${h})`;
+  cmpAc.textContent =
+    `L=${L.toFixed(3)}  C=${C.toFixed(3)}  h=${h.toFixed(1)}°\n` +
+    `L′=${Lp.toFixed(3)}  C′=${Cp.toFixed(3)}`;
+  badge(cmpAg, lv, Cm, C);
+
+  const {L:Lb, C:Cb} = fromPlus(L, C);
+  const gB = gamutMap(Lb, Cb, h);
+  cmpB.style.background = `oklch(${Lb} ${Cb} ${h})`;
+  cmpBc.textContent =
+    `L′=${L.toFixed(3)}  C′=${C.toFixed(3)}  h=${h.toFixed(1)}°\n` +
+    `L=${Lb.toFixed(3)}  C=${Cb.toFixed(3)}`;
+  badge(cmpBg, gB.lv, gB.Cm, Cb);
+
+  // スライダートラック
+  trkL.style.background =
+    `linear-gradient(to right,oklch(0 0 ${h}),oklch(1 0 ${h}))`;
+  trkC.style.background =
+    `linear-gradient(to right,oklch(${L} 0 ${h}),oklch(${L} 0.4 ${h}))`;
+  const cc = Math.min(Math.max(C, 0.08), 0.22);
+  trkH.style.background = `linear-gradient(to right,${
+    Array.from({length:13},(_,i)=>`oklch(${L} ${cc} ${i*30})`).join(',')
+  })`;
+
+  // 研究パネル
+  drawLCMap(L, C, h);
+  drawGradStrips(L, C, h);
+  hDisp.textContent  = `h = ${h.toFixed(1)}°`;
+  lcDisp.textContent = `L=${L.toFixed(3)}  h=${h.toFixed(1)}°`;
+}
+
+// ── L-C ガマット断面図 ────────────────────────────────────────────────────────
+function drawLCMap(L, C, h) {
+  const cv  = document.getElementById('lcCanvas');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  if (!W || !H) return;
+
+  // hが変わったときだけ背景を再計算
+  if (LC_CACHE.h !== h) {
+    const img = ctx.createImageData(W, H);
+
+    for (let py = 0; py < H; py++) {
+      const Lv = 1 - py / (H - 1);
+      for (let px = 0; px < W; px++) {
+        const Cv  = (px / (W - 1)) * 0.4;
+        const lin = oklchToLin(Lv, Cv, h);
+        const lv  = gamutLevel(lin);
+        const idx = (py * W + px) * 4;
+
+        if (lv === 'srgb') {
+          img.data[idx]   = Math.round(linToSRGB(lin[0]) * 255);
+          img.data[idx+1] = Math.round(linToSRGB(lin[1]) * 255);
+          img.data[idx+2] = Math.round(linToSRGB(lin[2]) * 255);
+          img.data[idx+3] = 255;
+        } else if (lv === 'p3') {
+          img.data[idx]   = Math.round(Math.max(0,Math.min(1,linToSRGB(lin[0])))*255);
+          img.data[idx+1] = Math.round(Math.max(0,Math.min(1,linToSRGB(lin[1])))*255);
+          img.data[idx+2] = Math.round(Math.max(0,Math.min(1,linToSRGB(lin[2])))*255);
+          img.data[idx+3] = 130;
+        } else {
+          img.data[idx]=0x26; img.data[idx+1]=0x26; img.data[idx+2]=0x26; img.data[idx+3]=255;
+        }
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+
+    // sRGB境界（白）
+    drawBoundary(ctx, W, H, h, inSRGB, 'rgba(255,255,255,0.85)', 1.5, false);
+    // P3境界（バイオレット破線）
+    drawBoundary(ctx, W, H, h, inP3, 'rgba(167,139,250,0.85)', 1.5, true);
+    // Oklch+ グリッド
+    drawPlusGrid(ctx, W, H);
+    // 軸グリッド線（薄い横線）
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 0.5;
+    [0.25, 0.50, 0.75].forEach(function(l) {
+      const py = (1 - l) * H;
+      ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(W, py); ctx.stroke();
+    });
+    ctx.restore();
+
+    // キャッシュ
+    LC_CACHE = { h, imgData: ctx.getImageData(0, 0, W, H) };
+  } else {
+    ctx.putImageData(LC_CACHE.imgData, 0, 0);
+  }
+
+  // クロスヘア（現在のL,C位置）
+  const cx = Math.max(1, Math.min(W-1, C / 0.4 * W));
+  const cy = Math.max(1, Math.min(H-1, (1 - L) * H));
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,0.65)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath();
+  ctx.moveTo(cx, 0); ctx.lineTo(cx, H);
+  ctx.moveTo(0, cy); ctx.lineTo(W, cy);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = 'rgba(0,0,0,0.45)';
+  ctx.strokeStyle = 'white';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 4, 0, Math.PI*2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+
+  // 軸ラベル
+  ctx.save();
+  ctx.font = '10px monospace';
+  ctx.fillStyle = 'rgba(148,163,184,0.70)';
+  ctx.textAlign = 'right';
+  [['L=0.75', 0.75], ['L=0.50', 0.50], ['L=0.25', 0.25]].forEach(function(p) {
+    ctx.fillText(p[0], W - 3, (1 - p[1]) * H - 3);
+  });
+  ctx.textAlign = 'center';
+  [0.1, 0.2, 0.3].forEach(function(c) {
+    ctx.fillText('C=' + c.toFixed(1), c / 0.4 * W, H - 3);
+  });
+  // 現在地ラベル
+  ctx.fillStyle = 'rgba(255,255,255,0.75)';
+  ctx.textAlign = cx < W * 0.7 ? 'left' : 'right';
+  const lx2 = cx < W * 0.7 ? cx + 8 : cx - 8;
+  const ly2 = cy > 14 ? cy - 7 : cy + 14;
+  ctx.fillText('現在地', lx2, ly2);
+  ctx.restore();
+}
+
+function drawBoundary(ctx, W, H, h, testFn, color, lw, dashed) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lw;
+  if (dashed) ctx.setLineDash([5, 3]);
+  ctx.beginPath();
+  let started = false;
+  for (let py = 0; py < H; py++) {
+    const Lv = 1 - py / (H - 1);
+    if (!testFn(oklchToLin(Lv, 0.001, h))) { started = false; continue; }
+    let lo=0, hi=0.4;
+    for (let i=0; i<22; i++) {
+      const mid=(lo+hi)/2;
+      testFn(oklchToLin(Lv, mid, h)) ? (lo=mid) : (hi=mid);
+    }
+    const px = lo / 0.4 * W;
+    if (!started) { ctx.moveTo(px, py); started = true; }
+    else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
+function drawPlusGrid(ctx, W, H) {
+  ctx.save();
+  ctx.strokeStyle = 'rgba(167,139,250,0.22)';
+  ctx.lineWidth = 0.5;
+  // 等C′ライン（縦）
+  for (let i=1; i<=9; i++) {
+    const Cp = i / 10;
+    const Cph = cPrimeToPhysC(Cp);
+    if (Cph > 0.4) continue;
+    const px = Cph / 0.4 * W;
+    ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, H); ctx.stroke();
+  }
+  // 等L′ライン（横）
+  for (let i=1; i<=9; i++) {
+    const Lp  = i / 10;
+    const Lph = Math.pow(Lp, 1 / OP_A);
+    const py  = (1 - Lph) * H;
+    ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(W, py); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// ── 等間隔サンプリング比較ストリップ ─────────────────────────────────────────
+function drawGradStrips(L, C, h) {
+  const cv  = document.getElementById('gradCanvas');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  if (!W || !H) return;
+
+  const STEPS = 48;
+  const SH = Math.floor(H / 2);
+
+  // ① maxC を先に計算（GM・clip線で共用）
+  let loC=0, hiC=0.4;
+  if (!inSRGB(oklchToLin(L, 0.001, h))) {
+    loC = 0;
+  } else {
+    for (let i=0; i<28; i++) {
+      const mid=(loC+hiC)/2;
+      inSRGB(oklchToLin(L, mid, h)) ? (loC=mid) : (hiC=mid);
+    }
+  }
+  const maxC  = loC;
+  const maxCp = toPlus(L, maxC).Cp;
+
+  // ② ストリップ描画
+  for (let i = 0; i < STEPS; i++) {
+    const x = Math.round(i / STEPS * W);
+    const w = Math.round((i+1) / STEPS * W) - x;
+    const t = i / (STEPS - 1);
+
+    // OKLCH: C を 0〜0.4 等間隔（GM on なら maxC でクランプ）
+    const C1 = GM_ON ? Math.min(t * 0.4, maxC) : t * 0.4;
+    const l1 = oklchToLin(L, C1, h).map(c => Math.max(0, Math.min(1, linToSRGB(c))));
+    ctx.fillStyle = `rgb(${Math.round(l1[0]*255)},${Math.round(l1[1]*255)},${Math.round(l1[2]*255)})`;
+    ctx.fillRect(x, 0, w, SH);
+
+    // OKLCH+: C′ を 0〜0.4 等間隔 → 物理C（GM on なら maxCp でクランプ）
+    const Cp = GM_ON ? Math.min(t * 0.4, maxCp) : t * 0.4;
+    const C2 = cPrimeToPhysC(Cp);
+    const l2 = oklchToLin(L, C2, h).map(c => Math.max(0, Math.min(1, linToSRGB(c))));
+    ctx.fillStyle = `rgb(${Math.round(l2[0]*255)},${Math.round(l2[1]*255)},${Math.round(l2[2]*255)})`;
+    ctx.fillRect(x, SH, w, H - SH);
+  }
+
+  // ③ 区切り線
+  ctx.fillStyle = 'rgba(0,0,0,0.4)';
+  ctx.fillRect(0, SH-1, W, 2);
+
+  // ④ CSS clip(sRGB) 線（常に表示）
+  const clipX_oklch = maxC  / 0.4 * W;
+  const clipX_plus  = maxCp / 0.4 * W;
+
+  ctx.save();
+  ctx.strokeStyle = '#facc15';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([3, 2]);
+  if (clipX_oklch > 2 && clipX_oklch < W - 2) {
+    ctx.beginPath();
+    ctx.moveTo(clipX_oklch, 0);
+    ctx.lineTo(clipX_oklch, SH);
+    ctx.stroke();
+  }
+  if (clipX_plus > 2 && clipX_plus < W - 2) {
+    ctx.beginPath();
+    ctx.moveTo(clipX_plus, SH);
+    ctx.lineTo(clipX_plus, H);
+    ctx.stroke();
+  }
+  ctx.setLineDash([]);
+  // clip ラベル
+  ctx.font = '9px monospace';
+  ctx.fillStyle = '#facc15';
+  ctx.textAlign = 'center';
+  if (clipX_oklch > 16 && clipX_oklch < W - 16) {
+    ctx.fillText('clip', clipX_oklch, SH - 3);
+  }
+  if (clipX_plus > 16 && clipX_plus < W - 16) {
+    ctx.fillText('clip', clipX_plus, H - 3);
+  }
+  ctx.restore();
+
+  // ⑤ 現在のC位置マーカー（実線＋中央ドット）
+  const curCp    = toPlus(L, C).Cp;
+  const markerX1 = Math.max(1, Math.min(W-1, C     / 0.4 * W));
+  const markerX2 = Math.max(1, Math.min(W-1, curCp / 0.4 * W));
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,0.95)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(markerX1, 0); ctx.lineTo(markerX1, SH); ctx.stroke();
+  ctx.fillStyle = 'white';
+  ctx.beginPath();
+  ctx.arc(markerX1, SH / 2, 3.5, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(markerX2, SH); ctx.lineTo(markerX2, H); ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(markerX2, SH + (H - SH) / 2, 3.5, 0, Math.PI * 2); ctx.fill();
+  // 現在 ラベル
+  ctx.font = '9px monospace';
+  ctx.fillStyle = 'rgba(255,255,255,0.80)';
+  ctx.textAlign = markerX1 < W - 24 ? 'left' : 'right';
+  ctx.fillText('現在', markerX1 < W - 24 ? markerX1 + 3 : markerX1 - 3, 9);
+  ctx.textAlign = markerX2 < W - 24 ? 'left' : 'right';
+  ctx.fillText('現在', markerX2 < W - 24 ? markerX2 + 3 : markerX2 - 3, SH + 9);
+  ctx.restore();
+}
+
+// ── Canvas 初期化・リサイズ ───────────────────────────────────────────────────
+function initCanvases() {
+  const panel = document.getElementById('resPanel');
+  const innerW = panel.clientWidth - 32; // padding 2×16px
+
+  const lcCv = document.getElementById('lcCanvas');
+  lcCv.width  = innerW;
+  lcCv.height = Math.round(innerW * 0.46);
+
+  const grCv = document.getElementById('gradCanvas');
+  grCv.width  = innerW - 60; // 右ラベル 52px + gap 8px
+  grCv.height = 56;
+
+  LC_CACHE = { h: null, imgData: null }; // キャッシュ無効化
+}
+
+let resizeTimer = null;
+window.addEventListener('resize', function() {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(function() { initCanvases(); render(); }, 150);
+});
+
+// ── アニメーション ────────────────────────────────────────────────────────────
+function animTo(tL, tC, tH, dur) {
+  if (AFRAME) cancelAnimationFrame(AFRAME);
+  const s0L=parseFloat(sL.value), s0C=parseFloat(sC.value), s0H=parseFloat(sH.value);
+  let dH = tH - s0H;
+  if (dH >  180) dH -= 360;
+  if (dH < -180) dH += 360;
+  const t0 = performance.now();
+  function step(now) {
+    const p = Math.min((now-t0)/dur, 1);
+    const e = p<.5 ? 2*p*p : -1+(4-2*p)*p;
+    sL.value = s0L + (tL-s0L)*e;
+    sC.value = s0C + (tC-s0C)*e;
+    sH.value = ((s0H+dH*e)+360)%360;
+    render();
+    if (p < 1) AFRAME = requestAnimationFrame(step);
+  }
+  AFRAME = requestAnimationFrame(step);
+}
+
+// ── ベースカラー適用 ──────────────────────────────────────────────────────────
+function applyBase() {
+  const p = parseColor(binput.value);
+  if (!p) {
+    binput.classList.add('err');
+    bhint.style.color = 'var(--orange)';
+    bhint.textContent = '⚠ HEX (#RRGGBB) または oklch(L C h) を入力してください';
+    return;
+  }
+  binput.classList.remove('err');
+  bhint.textContent = '';
+  sL.value = Math.max(0, Math.min(1,   p.L));
+  sC.value = Math.max(0, Math.min(0.4, p.C));
+  sH.value = ((p.h % 360) + 360) % 360;
+  document.getElementById('sfColorLabel').textContent = 'カスタムカラー';
+  render();
+}
+applybtn.addEventListener('click', applyBase);
+binput.addEventListener('keydown', function(e){ if(e.key==='Enter') applyBase(); });
+binput.addEventListener('input',   function(){ binput.classList.remove('err'); bhint.textContent=''; });
+
+// ── 数値入力 ↔ スライダー 双方向同期 ─────────────────────────────────────────
+function linkInput(numEl, sliderEl) {
+  numEl.addEventListener('change', function() {
+    const v = parseFloat(this.value);
+    if (!isNaN(v)) {
+      sliderEl.value = Math.max(parseFloat(sliderEl.min), Math.min(parseFloat(sliderEl.max), v));
+      render();
+    }
+  });
+  numEl.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { this.blur(); return; }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      const step = parseFloat(sliderEl.step) || 0.001;
+      const delta = e.key === 'ArrowUp' ? step : -step;
+      sliderEl.value = Math.max(
+        parseFloat(sliderEl.min),
+        Math.min(parseFloat(sliderEl.max), parseFloat(sliderEl.value) + delta)
+      );
+      render();
+    }
+  });
+}
+linkInput(nL, sL);
+linkInput(nC, sC);
+linkInput(nH, sH);
+
+// ── スライダー操作 ────────────────────────────────────────────────────────────
+[sL, sC, sH].forEach(function(el) {
+  el.addEventListener('input', function() {
+    document.getElementById('sfColorLabel').textContent = 'カスタムカラー';
+    render();
+    if (THEME_APPLIED) liveApplyTheme();
+  });
+});
+
+// テーマ適用済み時にスライダーからリアルタイム更新
+function liveApplyTheme() {
+  const L = parseFloat(sL.value);
+  const C = parseFloat(sC.value);
+  const h = parseFloat(sH.value);
+  const pal = buildPalette(L, C, h, PAL_DARK);
+  if (PAL_DARK) {
+    const root = document.documentElement;
+    pal.forEach(function(col) {
+      const v = THEME_MAP[col.name];
+      if (v) root.style.setProperty(v,
+        'oklch(' + col.L.toFixed(3) + ' ' + col.C.toFixed(3) + ' ' + col.h + ')');
+    });
+  }
+  lastPalette = pal;
+  renderPalette(pal);
+  applyFontPreviewTheme(pal);
+}
+
+// ── 研究タブ oklch コピー（直接管理） ─────────────────────────────────────────
+(function() {
+  const btn = document.getElementById('resOklchCopyBtn');
+  if (!btn) return;
+  btn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const valEl = document.getElementById('vOklch');
+    const text  = valEl ? valEl.textContent.trim() : '';
+    if (!text || text === '—') return;
+
+    function onOk() {
+      btn.textContent = '✓'; btn.classList.add('ok');
+      // ベースカラー入力にも自動セット
+      const bi = document.getElementById('binput');
+      if (bi) bi.value = text;
+      setTimeout(function() { btn.textContent = 'copy'; btn.classList.remove('ok'); }, 1800);
+    }
+    function onErr() {
+      // フォールバック：inputで選択してCtrl+Cを促す
+      const bi = document.getElementById('binput');
+      if (bi) { bi.value = text; bi.focus(); bi.select(); }
+      btn.textContent = '→入力欄';
+      setTimeout(function() { btn.textContent = 'copy'; }, 2000);
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(onOk).catch(onErr);
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.cssText = 'position:fixed;left:-9999px;top:0;opacity:0';
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch(e2) {}
+      document.body.removeChild(ta);
+      ok ? onOk() : onErr();
+    }
+  });
+})();
+function copyText(text, btn) {
+  function onSuccess() {
+    btn.textContent = '✓'; btn.classList.add('ok');
+    setTimeout(function(){ btn.textContent='copy'; btn.classList.remove('ok'); }, 1500);
+  }
+  function fallback() {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;left:-9999px;top:0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    try { document.execCommand('copy'); onSuccess(); }
+    catch(e) { btn.textContent = '!'; setTimeout(function(){ btn.textContent='copy'; }, 1500); }
+    document.body.removeChild(ta);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(onSuccess).catch(fallback);
+  } else {
+    fallback();
+  }
+}
+
+document.querySelectorAll('.cpybtn').forEach(function(btn) {
+  if (btn.id === 'promptCopyBtn') return; // promptCopyBtnは個別管理
+  btn.addEventListener('click', function() {
+    const el = document.getElementById(this.dataset.src);
+    if (!el) return;
+    copyText(el.textContent.trim(), btn);
+  });
+});
+
+// ── LC キャンバス ドラッグ操作 ───────────────────────────────────────────────
+(function() {
+  const cv = document.getElementById('lcCanvas');
+  let dragging = false;
+
+  function applyPos(e) {
+    const rect = cv.getBoundingClientRect();
+    const cx   = ((e.clientX - rect.left) / rect.width)  * cv.width;
+    const cy   = ((e.clientY - rect.top)  / rect.height) * cv.height;
+    const C = Math.max(0, Math.min(0.4, cx / cv.width  * 0.4));
+    const L = Math.max(0, Math.min(1,   1 - cy / cv.height));
+    sC.value = C.toFixed(4);
+    sL.value = L.toFixed(4);
+    render();
+  }
+
+  cv.addEventListener('mousedown',  function(e){ dragging=true;  applyPos(e); });
+  cv.addEventListener('mousemove',  function(e){ if(dragging) applyPos(e); });
+  cv.addEventListener('mouseup',    function(){ dragging=false; });
+  cv.addEventListener('mouseleave', function(){ dragging=false; });
+
+  cv.addEventListener('touchstart', function(e){ e.preventDefault(); dragging=true;  applyPos(e.touches[0]); }, {passive:false});
+  cv.addEventListener('touchmove',  function(e){ e.preventDefault(); if(dragging) applyPos(e.touches[0]); }, {passive:false});
+  cv.addEventListener('touchend',   function(){ dragging=false; });
+})();
+
+// ── フォント選択 ──────────────────────────────────────────────────────────────
+const FONT_BODY = [
+  { id:'noto',   label:'Noto Sans JP', sub:'ゴシック', family:"'Noto Sans JP', sans-serif",        gf:'Noto+Sans+JP:wght@400;500;700' },
+  { id:'zen',    label:'Zen Gothic',   sub:'モダン',   family:"'Zen Kaku Gothic New', sans-serif", gf:'Zen+Kaku+Gothic+New:wght@400;700' },
+  { id:'system', label:'システム',     sub:'高速',     family:'system-ui, sans-serif',             gf:null },
+];
+const FONT_HEAD = [
+  { id:'same',   label:'本文と同じ', sub:'統一感',    family:null },
+  { id:'anton',  label:'Anton',      sub:'インパクト', family:"'Anton', sans-serif",             gf:'Anton' },
+  { id:'mincho', label:'明朝体',     sub:'格調',      family:"'Shippori Mincho', serif",         gf:'Shippori+Mincho:wght@400;700' },
+];
+const FONT_SIZE = [
+  { id:'compact',  label:'コンパクト', sub:'密度重視',   base:14, lg:18, xl:28 },
+  { id:'standard', label:'標準',       sub:'バランス',   base:16, lg:20, xl:32 },
+  { id:'large',    label:'ゆったり',   sub:'読みやすさ', base:18, lg:24, xl:40 },
+];
+
+let SEL_FBODY = FONT_BODY[0];
+let SEL_FHEAD = FONT_HEAD[0];
+let SEL_FSIZE = FONT_SIZE[1];
+
+function loadGFont(gf, callback) {
+  if (!gf) { if (callback) callback(); return; }
+  const id = 'gf-' + gf.replace(/\W/g, '');
+  if (document.getElementById(id)) { if (callback) callback(); return; }
+  const lnk = document.createElement('link');
+  lnk.id = id; lnk.rel = 'stylesheet';
+  lnk.href = 'https://fonts.googleapis.com/css2?family=' + gf + '&display=swap';
+  lnk.onload = function() { if (callback) callback(); };
+  document.head.appendChild(lnk);
+}
+
+function applyFonts() {
+  const root       = document.documentElement;
+  const headFamily = SEL_FHEAD.family || SEL_FBODY.family;
+  root.style.setProperty('--ff-body', SEL_FBODY.family);
+  root.style.setProperty('--ff-head', headFamily);
+  root.style.setProperty('--fs-preview-head', SEL_FSIZE.lg   + 'px');
+  root.style.setProperty('--fs-preview-body', SEL_FSIZE.base + 'px');
+}
+
+function makeFontBtns(container, arr, getCurrent, setCurrent) {
+  arr.forEach(function(opt) {
+    const btn = document.createElement('button');
+    btn.className = 'font-btn' + (getCurrent() === opt ? ' on' : '');
+    btn.innerHTML = '<span class="fb-nm">' + opt.label + '</span><span class="fb-sub">' + opt.sub + '</span>';
+    btn.addEventListener('click', function() {
+      setCurrent(opt);
+      container.querySelectorAll('.font-btn').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      loadGFont(opt.gf, applyFonts);
+      if (!opt.gf) applyFonts();
+    });
+    container.appendChild(btn);
+  });
+}
+
+makeFontBtns(document.getElementById('fontBodyOpts'), FONT_BODY,
+  function() { return SEL_FBODY; }, function(v) { SEL_FBODY = v; });
+makeFontBtns(document.getElementById('fontHeadOpts'), FONT_HEAD,
+  function() { return SEL_FHEAD; }, function(v) { SEL_FHEAD = v; });
+makeFontBtns(document.getElementById('fontSizeOpts'), FONT_SIZE,
+  function() { return SEL_FSIZE; }, function(v) { SEL_FSIZE = v; });
+
+// ── 2段階カラー選択 ───────────────────────────────────────────────────────────
+const CATEGORIES = [
+  { id:'flame',    label:'茜・緋', sub:'茜に染まる',  h:25,  L:0.55, C:0.18 },
+  { id:'wheat',    label:'柿・麦', sub:'実りの季節',  h:60,  L:0.61, C:0.13 },
+  { id:'forest',   label:'柳・翠', sub:'翡翠の輝き',  h:160, L:0.56, C:0.12 },
+  { id:'sea',      label:'空・海', sub:'初夏の青',    h:225, L:0.65, C:0.15 },
+  { id:'mist',     label:'露・藍', sub:'藍に露',      h:264, L:0.46, C:0.10 },
+  { id:'wisteria', label:'藤・宵', sub:'宵待ちの藤',  h:315, L:0.40, C:0.10 },
+];
+
+const MOODS = [
+  { id:'midnight', label:'深夜',   desc:'暗沈', sub:'沈んだ深い色',   L:0.28, C:0.07 },
+  { id:'dawn',     label:'夜明け', desc:'薄明', sub:'薄明かりの色',   L:0.42, C:0.14 },
+  { id:'morning',  label:'朝',     desc:'清澄', sub:'清澄な色',       L:0.60, C:0.18 },
+  { id:'noon',     label:'正午',   desc:'白昼', sub:'白昼の色',       L:0.68, C:0.15 },
+  { id:'dusk',     label:'夕暮れ', desc:'夕映', sub:'最も鮮やかな色', L:0.55, C:0.19 },
+  { id:'evening',  label:'宵',     desc:'静寂', sub:'落ち着いた色',   L:0.38, C:0.10 },
+];
+
+let SEL_CAT  = null;
+let SEL_MOOD = null;
+let PAL_DARK = true;
+let lastPalette = null;
+
+// カテゴリグリッド生成
+const catGrid  = document.getElementById('catGrid');
+const moodGrid = document.getElementById('moodGrid');
+
+CATEGORIES.forEach(function(cat) {
+  const btn = document.createElement('button');
+  btn.className = 'cat-btn';
+  btn.dataset.id = cat.id;
+
+  const dot = document.createElement('span');
+  dot.className = 'cat-dot';
+  dot.style.background = `oklch(${cat.L} ${cat.C} ${cat.h})`;
+
+  const nm = document.createElement('span');
+  nm.className = 'cat-name';
+  nm.textContent = cat.label;
+
+  const sub = document.createElement('span');
+  sub.className = 'cat-sub';
+  sub.textContent = cat.sub;
+
+  const hue = document.createElement('span');
+  hue.className = 'cat-hue';
+  hue.textContent = 'h = ' + cat.h + '°';
+
+  btn.appendChild(dot); btn.appendChild(nm); btn.appendChild(sub); btn.appendChild(hue);
+  btn.addEventListener('click', function() {
+    SEL_CAT = cat;
+    document.querySelectorAll('.cat-btn').forEach(b => {
+      b.classList.remove('on');
+      b.style.borderColor = '';
+      b.style.background  = '';
+    });
+    btn.classList.add('on');
+    const col = `oklch(${cat.L} ${cat.C} ${cat.h})`;
+    btn.style.borderColor = col;
+    btn.style.background  = `oklch(${cat.L} ${cat.C} ${cat.h} / 0.12)`;
+    document.getElementById('sn1').classList.add('done');
+    updateFooterLabel();
+    renderTimeStrip();
+    applySelection();
+  });
+  catGrid.appendChild(btn);
+});
+
+// ── 時間帯プレビューストリップ ────────────────────────────────────────────────
+function renderTimeStrip() {
+  const strip = document.getElementById('timeStrip');
+  if (!strip) return;
+  if (!SEL_CAT) { strip.style.display = 'none'; return; }
+
+  strip.style.display = 'grid';
+  strip.innerHTML = '';
+
+  MOODS.forEach(function(time) {
+    const isOn = SEL_MOOD && SEL_MOOD.id === time.id;
+    const item = document.createElement('div');
+    item.className = 'ts-item' + (isOn ? ' on' : '');
+
+    const sw = document.createElement('div');
+    sw.className = 'ts-swatch';
+    sw.style.background = 'oklch(' + time.L + ' ' + time.C + ' ' + SEL_CAT.h + ')';
+
+    if (isOn && SEL_CAT) {
+      const col = 'oklch(' + SEL_CAT.L + ' ' + SEL_CAT.C + ' ' + SEL_CAT.h + ')';
+      sw.style.borderColor = col;
+      sw.style.boxShadow   = '0 0 0 1px ' + col;
+    }
+
+    const lbl = document.createElement('span');
+    lbl.className = 'ts-label';
+    lbl.textContent = time.label;
+
+    const desc = document.createElement('span');
+    desc.className = 'ts-desc';
+    desc.textContent = time.desc;
+
+    if (isOn && SEL_CAT) {
+      const col = 'oklch(' + SEL_CAT.L + ' ' + SEL_CAT.C + ' ' + SEL_CAT.h + ')';
+      lbl.style.color  = col;
+      desc.style.color = col;
+    }
+
+    item.appendChild(sw);
+    item.appendChild(lbl);
+    item.appendChild(desc);
+
+    item.addEventListener('click', function() {
+      SEL_MOOD = time;
+      const sn2 = document.getElementById('sn2');
+      if (sn2) sn2.classList.add('done');
+      const sn3 = document.getElementById('sn3');
+      if (sn3) sn3.classList.add('done');
+      updateFooterLabel();
+      renderTimeStrip();
+      applySelection();
+    });
+
+    strip.appendChild(item);
+  });
+}
+
+function applySelection() {
+  if (!SEL_CAT) return;
+  const time = SEL_MOOD;
+  const L = time ? time.L : SEL_CAT.L;
+  const C = time ? time.C : SEL_CAT.C;
+  const h = SEL_CAT.h;
+  animTo(L, C, h, 320);
+  if (SEL_MOOD) autoGenPalette(L, C, h);
+}
+
+// テーマ切替
+const palDarkBtn  = document.getElementById('palDark');
+const palLightBtn = document.getElementById('palLight');
+palDarkBtn.addEventListener('click',  function(){
+  PAL_DARK=true;
+  palDarkBtn.classList.add('on');  palLightBtn.classList.remove('on');
+  if(SEL_CAT&&SEL_MOOD) autoGenPalette();
+});
+palLightBtn.addEventListener('click', function(){
+  PAL_DARK=false;
+  palLightBtn.classList.add('on'); palDarkBtn.classList.remove('on');
+  if(SEL_CAT&&SEL_MOOD) autoGenPalette();
+});
+
+// 手動生成ボタン
+const palGenBtn = document.getElementById('palGenBtn');
+palGenBtn.addEventListener('click', function() {
+  autoGenPalette(parseFloat(sL.value), parseFloat(sC.value), parseFloat(sH.value));
+  setTimeout(function() {
+    const pg = document.getElementById('palGrid');
+    if (pg) pg.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 80);
+});
+
+function clampL(v){ return Math.max(0.05, Math.min(0.99, v)); }
+
+function buildPalette(L, C, h, dark) {
+  return [
+    { name:'primary',     L:clampL(L),      C,          h },
+    { name:'primary-sub', L:clampL(L+0.13), C:C*0.60,   h },
+    { name:'bg',          L:dark?0.09:0.98, C:0.015,    h },
+    { name:'surface',     L:dark?0.14:0.94, C:0.015,    h },
+    { name:'surface-2',   L:dark?0.20:0.89, C:0.02,     h },
+    { name:'text',        L:dark?0.93:0.12, C:0.01,     h },
+    { name:'muted',       L:dark?0.60:0.46, C:0.01,     h },
+    { name:'border',      L:dark?0.26:0.82, C:0.02,     h },
+    { name:'success',     L:dark?0.72:0.55, C:0.18, h:145 },
+    { name:'warning',     L:dark?0.84:0.66, C:0.15, h:90  },
+    { name:'error',       L:dark?0.62:0.50, C:0.22, h:25  },
+  ];
+}
+
+function autoGenPalette(L, C, h) {
+  L = L ?? parseFloat(sL.value);
+  C = C ?? parseFloat(sC.value);
+  h = h ?? parseFloat(sH.value);
+  lastPalette = buildPalette(L, C, h, PAL_DARK);
+  renderPalette(lastPalette);
+  document.getElementById('palFooter').style.display = 'flex';
+  applyTheme(lastPalette);
+  applyFontPreviewTheme(lastPalette);
+  showPromptExample();
+}
+
+function applyFontPreviewTheme(pal) {
+  const preview = document.querySelector('.font-preview');
+  const fpHead  = document.querySelector('.fp-head');
+  const fpBody  = document.querySelector('.fp-body');
+  const fpBtn   = document.getElementById('fpBtn');
+  const fpLbl   = document.getElementById('fpBtnLbl');
+  if (!preview) return;
+
+  const get = function(name) {
+    const c = pal.find(function(p){ return p.name === name; });
+    return c ? 'oklch(' + c.L.toFixed(3) + ' ' + c.C.toFixed(3) + ' ' + c.h + ')' : null;
+  };
+  const getL = function(name) {
+    const c = pal.find(function(p){ return p.name === name; });
+    return c ? c.L : null;
+  };
+
+  if (PAL_DARK) {
+    preview.style.background  = '';
+    preview.style.borderColor = '';
+    if (fpHead) fpHead.style.color = '';
+    if (fpBody) fpBody.style.color = '';
+    if (fpBtn)  { fpBtn.style.background = ''; fpBtn.style.color = ''; }
+    if (fpLbl)  fpLbl.style.color = '';
+  } else {
+    preview.style.background  = get('bg')     || '';
+    preview.style.borderColor = get('border') || '';
+    if (fpHead) fpHead.style.color = get('text')  || '';
+    if (fpBody) fpBody.style.color = get('muted') || '';
+    if (fpBtn) {
+      const prim    = get('primary');
+      const primL   = getL('primary') || 0.5;
+      const btnText = primL > 0.55 ? get('bg') : get('text');
+      fpBtn.style.background = prim    || '';
+      fpBtn.style.color      = btnText || '';
+    }
+    if (fpLbl) fpLbl.style.color = get('muted') || '';
+  }
+}
+
+function showPromptExample() {
+  const catLabel  = SEL_CAT  ? SEL_CAT.label  : '情景';
+  const moodLabel = SEL_MOOD ? SEL_MOOD.label : '時間帯';
+
+  const lines = [
+    '「' + catLabel + ' / ' + moodLabel + '」の配色（添付 color-system.md）を使って',
+    '（Webページ / Webアプリ / プロトタイプ / コンポーネント / SVGなど、目的を記入）を',
+    'デザインしてください。',
+    '',
+    '色の役割は md の「使い分けガイド」を参照してください。',
+    '',
+    '（追加の指示があればここに書き足してください）',
+  ];
+
+  const text = lines.join('\n');
+  document.getElementById('promptText').textContent = text;
+  document.getElementById('promptBox').style.display = 'block';
+
+  const copyBtn = document.getElementById('promptCopyBtn');
+  copyBtn.onclick = function() { copyText(text, copyBtn); };
+}
+
+const PAL_LABELS = {
+  'primary':   'メインボタン',
+  'primary-sub':'ホバー時',
+  'bg':        'ページ背景',
+  'surface':   'カード背景',
+  'surface-2': 'サブ背景',
+  'text':      '本文テキスト',
+  'muted':     '補足テキスト',
+  'border':    '区切り線',
+  'success':   '完了（緑）',
+  'warning':   '警告（黄）',
+  'error':     'エラー（赤）',
+};
+
+function renderPalette(pal) {
+  const grid = document.getElementById('palGrid');
+  grid.innerHTML = '';
+  pal.forEach(function(col) {
+    const { hex } = gamutMap(col.L, col.C, col.h);
+    const wrap = document.createElement('div');
+    wrap.className = 'pal-sw-wrap';
+
+    const sw = document.createElement('div');
+    sw.className = 'pal-sw';
+    const oklchVal = `oklch(${col.L.toFixed(3)} ${col.C.toFixed(3)} ${col.h})`;
+    sw.style.background = oklchVal;
+    sw.title = oklchVal;
+    sw.addEventListener('click', function() {
+      navigator.clipboard.writeText(oklchVal);
+      sw.style.outline = '2px solid var(--sky)';
+      setTimeout(function(){ sw.style.outline=''; }, 900);
+    });
+
+    const nm = document.createElement('div');
+    nm.className = 'pal-nm';
+    nm.textContent = PAL_LABELS[col.name] || col.name;
+
+    wrap.appendChild(sw); wrap.appendChild(nm);
+    grid.appendChild(wrap);
+  });
+}
+
+function buildMd(pal) {
+  const catLabel  = SEL_CAT  ? SEL_CAT.label  : '未選択';
+  const catSub    = SEL_CAT  ? SEL_CAT.sub    : '';
+  const moodLabel = SEL_MOOD ? SEL_MOOD.label : '未選択';
+  const theme     = PAL_DARK ? 'Dark' : 'Light';
+  const title     = (SEL_CAT && SEL_MOOD)
+    ? SEL_CAT.label + ' / ' + SEL_MOOD.label : 'カスタム';
+
+  // CSS Variables
+  const cssLines = [':root {'];
+  pal.forEach(function(col) {
+    const pad = ' '.repeat(Math.max(1, 18 - col.name.length));
+    cssLines.push(
+      '  --color-' + col.name + ':' + pad +
+      'oklch(' + col.L.toFixed(3) + ' ' + col.C.toFixed(3) + ' ' + col.h + ');'
+    );
+  });
+  cssLines.push('}');
+
+  // 使い分けガイド
+  const guide = [
+    '- `--color-primary`     : メインボタン（問い合わせ・購入など）・リンク・選択中の状態',
+    '- `--color-primary-sub` : ボタンのホバー時・選択状態の背景',
+    '- `--color-bg`          : ページ全体の背景',
+    '- `--color-surface`     : カード・モーダルの背景',
+    '- `--color-surface-2`   : 入力フィールド・サブエリアの背景',
+    '- `--color-text`        : 本文テキスト',
+    '- `--color-muted`       : 補足テキスト・ラベル',
+    '- `--color-border`      : 区切り線・枠線',
+    '- `--color-success`     : 完了・正常（緑系）',
+    '- `--color-warning`     : 注意・警告（黄系）',
+    '- `--color-error`       : エラー・危険（赤系）',
+  ];
+
+  // § 9 クイックリファレンス
+  const findCol = function(name) {
+    const c = pal.find(function(p){ return p.name === name; });
+    return c ? 'oklch(' + c.L.toFixed(3) + ' ' + c.C.toFixed(3) + ' ' + c.h + ')' : '—';
+  };
+  const qr = [
+    'Brand Intent : ' + catLabel + ' / ' + moodLabel,
+    'Theme        : ' + theme,
+    'Primary      : ' + findCol('primary'),
+    'BG           : ' + findCol('bg'),
+    'Surface      : ' + findCol('surface'),
+    'Text         : ' + findCol('text'),
+    'Muted        : ' + findCol('muted'),
+    'Border       : ' + findCol('border'),
+    'Success      : ' + findCol('success'),
+    'Warning      : ' + findCol('warning'),
+    'Error        : ' + findCol('error'),
+  ];
+
+  // § 9 プロンプト例
+  const promptEx = [
+    'このDESIGN.mdのカラーシステムを使って、（' + catLabel + '）の（Webページ）を作成してください。',
+    '',
+    '- 背景は --color-bg、テキストは --color-text を使用してください',
+    '- メインボタン（問い合わせ・購入など）は --color-primary を使用してください',
+    '- カード・パネルの背景は --color-surface を使用してください',
+    '- 補足テキストは --color-muted を使用してください',
+    '- 区切り線は --color-border を使用してください',
+    '- 完了・エラー・警告は --color-success / --color-error / --color-warning を使用してください',
+    '- 雰囲気：' + moodLabel + '（' + (SEL_MOOD ? SEL_MOOD.sub : '') + '）',
+    '',
+    '（追加の指示があればここに書き足してください）',
+  ];
+
+  // Typography セクション
+  const bodyFamily = SEL_FBODY.family;
+  const headFamily = SEL_FHEAD.family || bodyFamily;
+  const headLabel  = SEL_FHEAD.id === 'same' ? SEL_FBODY.label + '（本文と同じ）' : SEL_FHEAD.label;
+  const gfParts    = [SEL_FBODY.gf, SEL_FHEAD.id !== 'same' ? SEL_FHEAD.gf : null].filter(Boolean);
+  const gfUrl      = gfParts.length
+    ? 'https://fonts.googleapis.com/css2?' + gfParts.map(function(f){ return 'family=' + f; }).join('&') + '&display=swap'
+    : null;
+
+  const typo = [
+    '## 4. Typography',
+    '- 本文フォント：' + SEL_FBODY.label,
+    '- 見出しフォント：' + headLabel,
+    '- サイズ：本文 ' + SEL_FSIZE.base + 'px / 小見出し ' + SEL_FSIZE.lg + 'px / 大見出し ' + SEL_FSIZE.xl + 'px',
+  ];
+  if (gfUrl) {
+    typo.push('', '### Google Fonts 読み込み', '```html', '<link href="' + gfUrl + '" rel="stylesheet">', '```');
+  }
+  typo.push('', '### CSS Variables', '```css', ':root {',
+    '  --font-body:    ' + bodyFamily + ';',
+    '  --font-heading: ' + headFamily + ';',
+    '  --text-sm:   ' + (SEL_FSIZE.base - 2) + 'px;',
+    '  --text-base: ' + SEL_FSIZE.base + 'px;',
+    '  --text-lg:   ' + SEL_FSIZE.lg  + 'px;',
+    '  --text-xl:   ' + SEL_FSIZE.xl  + 'px;',
+    '}', '```'
+  );
+
+  return [
+    '# Color System — ' + title,
+    '',
+    '## 1. プロジェクト概要',
+    '- 業種・用途：' + catLabel + '（' + catSub + '）',
+    '- 雰囲気：' + moodLabel,
+    '- テーマ：' + theme,
+    '',
+    '## 2. CSS Variables（カラー）',
+    '```css',
+    cssLines.join('\n'),
+    '```',
+    '',
+    '## 3. 使い分けガイド',
+    guide.join('\n'),
+    '',
+    typo.join('\n'),
+    '',
+    '## 9. Agent Prompt Guide',
+    '',
+    '### クイックリファレンス',
+    '```',
+    qr.join('\n'),
+    '```',
+    '',
+    '### プロンプト例',
+    '```',
+    promptEx.join('\n'),
+    '```',
+  ].join('\n');
+}
+
+function buildCss(pal) {
+  const bodyFamily = SEL_FBODY.family;
+  const headFamily = SEL_FHEAD.family || bodyFamily;
+  const lines = [':root {'];
+  pal.forEach(function(col) {
+    const pad = ' '.repeat(Math.max(1, 18 - col.name.length));
+    lines.push('  --color-' + col.name + ':' + pad +
+      'oklch(' + col.L.toFixed(3) + ' ' + col.C.toFixed(3) + ' ' + col.h + ');');
+  });
+  lines.push('  --font-body:    ' + bodyFamily + ';');
+  lines.push('  --font-heading: ' + headFamily + ';');
+  lines.push('  --text-sm:   ' + (SEL_FSIZE.base - 2) + 'px;');
+  lines.push('  --text-base: ' + SEL_FSIZE.base + 'px;');
+  lines.push('  --text-lg:   ' + SEL_FSIZE.lg  + 'px;');
+  lines.push('  --text-xl:   ' + SEL_FSIZE.xl  + 'px;');
+  lines.push('}');
+  return lines.join('\n');
+}
+
+const palCopyBtn = document.getElementById('palCopyBtn');
+palCopyBtn.addEventListener('click', function() {
+  if (!lastPalette) return;
+  copyText(buildCss(lastPalette), palCopyBtn);
+  palCopyBtn.textContent = '✓ コピー済み';
+  setTimeout(function(){ palCopyBtn.textContent = 'CSS をコピー'; }, 1800);
+});
+palCssBtn.addEventListener('click', function() {
+  if (!lastPalette) return;
+  const content  = buildMd(lastPalette);
+  const catId    = SEL_CAT  ? SEL_CAT.id   : 'custom';
+  const moodId   = SEL_MOOD ? SEL_MOOD.id  : '';
+  const filename = 'color-system' + (catId ? '-' + catId : '') + (moodId ? '-' + moodId : '') + '.md';
+  const blob = new Blob([content], { type: 'text/markdown; charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  palCssBtn.textContent = '✓ 書き出し完了';
+  setTimeout(function(){ palCssBtn.textContent = 'md を書き出し'; }, 2000);
+});
+
+// ── Darkテーマ適用 ────────────────────────────────────────────────────────────
+// パレット色名 → アプリCSS変数 のマッピング（Dark専用）
+const THEME_MAP = {
+  'primary':   '--sky',
+  'bg':        '--bg',
+  'surface':   '--surface',
+  'surface-2': '--surf2',
+  'text':      '--text',
+  'muted':     '--muted',
+  'border':    '--border',
+};
+
+let THEME_APPLIED = false;
+
+function applyTheme(pal) {
+  if (!PAL_DARK) return;
+  const root = document.documentElement;
+  pal.forEach(function(col) {
+    const v = THEME_MAP[col.name];
+    if (v) root.style.setProperty(v,
+      'oklch(' + col.L.toFixed(3) + ' ' + col.C.toFixed(3) + ' ' + col.h + ')');
+  });
+  THEME_APPLIED = true;
+  LC_CACHE = { h: null, imgData: null };
+  render();
+}
+
+// フッターのカラーラベルを更新
+function updateFooterLabel() {
+  const el = document.getElementById('sfColorLabel');
+  if (SEL_CAT && SEL_MOOD) {
+    el.textContent = SEL_CAT.label + ' / ' + SEL_MOOD.label;
+  } else if (SEL_CAT) {
+    el.textContent = SEL_CAT.label;
+  } else {
+    el.textContent = 'カスタムカラー';
+  }
+}
+
+// ── タブ切替 ──────────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    const tab = this.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('on'));
+    this.classList.add('on');
+    const wrap = document.querySelector('.wrap');
+    if (tab === 'research') {
+      wrap.classList.add('tab-r');
+      // 研究タブ表示時にcanvasを初期化（サイズが確定するため）
+      initCanvases(); render();
+    } else {
+      wrap.classList.remove('tab-r');
+    }
+  });
+});
+
+// ── hue 回転アニメーション ────────────────────────────────────────────────────
+let HUE_ANIM = false;
+let HUE_RAF  = null;
+let HUE_LAST = null;
+const ROT_SPEED = 30; // °/秒
+
+const rotBtn  = document.getElementById('rotBtn');
+const rotBtn2 = document.getElementById('rotBtn2');
+const rotBtn3 = document.getElementById('rotBtn3');
+
+function setRotState(on) {
+  HUE_ANIM = on;
+  const label = on ? '⏹ 停止' : '色相 H 回転';
+  [rotBtn, rotBtn2, rotBtn3].forEach(function(b) {
+    if (!b) return;
+    b.textContent = label;
+    b.classList.toggle('on', on);
+  });
+}
+
+function toggleRot() {
+  setRotState(!HUE_ANIM);
+  if (HUE_ANIM) {
+    HUE_LAST = null;
+    HUE_RAF  = requestAnimationFrame(stepHue);
+  } else {
+    if (HUE_RAF) cancelAnimationFrame(HUE_RAF);
+  }
+}
+
+rotBtn.addEventListener('click',  toggleRot);
+rotBtn3.addEventListener('click', toggleRot);
+function stepHue(now) {
+  if (!HUE_ANIM) return;
+  if (HUE_LAST !== null) {
+    const dt  = (now - HUE_LAST) / 1000;
+    sH.value  = (parseFloat(sH.value) + ROT_SPEED * dt) % 360;
+    render();
+    if (THEME_APPLIED) liveApplyTheme();
+  }
+  HUE_LAST = now;
+  HUE_RAF  = requestAnimationFrame(stepHue);
+}
+// ── L-C キャンバス ホバーツールチップ ────────────────────────────────────────
+(function() {
+  const cv  = document.getElementById('lcCanvas');
+  const tip = document.getElementById('lcTooltip');
+
+  cv.addEventListener('mousemove', function(e) {
+    const rect = cv.getBoundingClientRect();
+    const px   = (e.clientX - rect.left) / rect.width  * cv.width;
+    const py   = (e.clientY - rect.top)  / rect.height * cv.height;
+    const Cv   = Math.max(0, Math.min(0.4, px / cv.width * 0.4));
+    const Lv   = Math.max(0, Math.min(1,   1 - py / cv.height));
+    const { Lp, Cp } = toPlus(Lv, Cv);
+    const lv   = gamutLevel(oklchToLin(Lv, Cv, parseFloat(sH.value)));
+    tip.innerHTML =
+      `L = ${Lv.toFixed(3)}  L′ = ${Lp.toFixed(3)}<br>` +
+      `C = ${Cv.toFixed(3)}  C′ = ${Cp.toFixed(3)}<br>` +
+      `gamut: ${lv}`;
+    const tw = 168, th = 58;
+    let tx = e.clientX - rect.left + 12;
+    let ty = e.clientY - rect.top  + 12;
+    if (tx + tw > rect.width)  tx = e.clientX - rect.left - tw - 12;
+    if (ty + th > rect.height) ty = e.clientY - rect.top  - th - 12;
+    tip.style.left = tx + 'px';
+    tip.style.top  = ty + 'px';
+    tip.classList.add('show');
+  });
+  cv.addEventListener('mouseleave', function() {
+    tip.classList.remove('show');
+  });
+})();
+
+initCanvases();
+
+// ── デフォルト選択（空・海 + 朝） ─────────────────────────────────────────
+(function() {
+  const defCat  = CATEGORIES.find(function(c){ return c.id === 'sea'; });
+  const defMood = MOODS.find(function(m){ return m.id === 'morning'; });
+  if (!defCat || !defMood) { render(); return; }
+
+  SEL_CAT = defCat;
+  document.querySelectorAll('.cat-btn').forEach(function(b) {
+    b.classList.toggle('on', b.dataset.id === 'sea');
+    if (b.dataset.id === 'sea') {
+      b.style.borderColor = `oklch(${defCat.L} ${defCat.C} ${defCat.h})`;
+      b.style.background  = `oklch(${defCat.L} ${defCat.C} ${defCat.h} / 0.12)`;
+    }
+  });
+  document.getElementById('sn1').classList.add('done');
+
+  SEL_MOOD = defMood;
+  const sn2el = document.getElementById('sn2');
+  if (sn2el) sn2el.classList.add('done');
+  const sn3 = document.getElementById('sn3');
+  if (sn3) sn3.classList.add('done');
+
+  updateFooterLabel();
+  renderTimeStrip();
+  applySelection();
+})();
+</script>
+</body>
+</html>
