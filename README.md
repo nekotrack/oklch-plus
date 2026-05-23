@@ -24,6 +24,19 @@ making quantitative interpretation of its individual STRESS score unreliable.
 
 ## Tools
 
+### `OKLCH_Color_Tool_JISAI_b4.html` — 時彩（ときいろ）Ver. β4
+
+Narrative color selection tool based on OKLCH perceptual uniformity.
+Choose a **scene** (情景 → Hue) and **time of day** (時間帯 → L/C) to generate an AI-ready color system.
+
+**Features:**
+- Scene × time-of-day 2-axis selection (6 scenes × 6 times = 36 combinations)
+- Auto-generates 11-color CSS Variable palette in OKLCH format
+- Exports `.md` for AI tools (Claude, ChatGPT, Cursor, etc.) and CSS for direct use
+- RESEARCH tab: Oklch+ correction visualization and L-C gamut cross-section
+
+---
+
 ### `okluch_gradient_pub.html` — Ver. 1.0-pub
 
 Interactive gradient comparison tool with full pipeline visualization.
@@ -85,6 +98,12 @@ with hue control at high chroma.
 ---
 
 ## Articles
+
+**時彩（ときいろ）**
+- [「清らかな朝のような色」がそのまま色座標になる — 情景×時間帯で色を選ぶツール「時彩」を作った](#) *(Zenn — coming soon)*
+- [色を「選ぶ」より「出会う」— 時彩 で AI・デザインツールに渡すパレットを作る](#) *(note — coming soon)*
+
+**Oklch+ / Hue Modulation**
 
 - [OKLCH グラデーションで色かぶりが起きる理由と、なめらかな解消法](https://zenn.dev/nekotrack/articles/35849cff2ba1c4) *(Zenn)*
 - [OKLCH グラデーションで意図しない色が現れる理由](https://note.com/nekotrack/n/n822dd5bbcefd) *(note)*
