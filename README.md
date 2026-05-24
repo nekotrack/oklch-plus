@@ -24,7 +24,7 @@ making quantitative interpretation of its individual STRESS score unreliable.
 
 ## Tools
 
-### `OKLCH_Color_Tool_JISAI_b4.html` — 時彩（ときいろ）Ver. β4
+### `oklch_color_tool_TOKIIRO.html` — 時彩（ときいろ）Ver. β4
 
 Narrative color selection tool based on OKLCH perceptual uniformity.
 Choose a **scene** (情景 → Hue) and **time of day** (時間帯 → L/C) to generate an AI-ready color system.
@@ -99,16 +99,16 @@ with hue control at high chroma.
 
 ## Articles
 
-**時彩（ときいろ）**
-- [「清らかな朝のような色」がそのまま色座標になる — 情景×時間帯で色を選ぶツール「時彩」を作った](#) *(Zenn — coming soon)*
-- [色を「選ぶ」より「出会う」— 時彩 で AI・デザインツールに渡すパレットを作る](#) *(note — coming soon)*
+**時彩（ときいろ / TOKIIRO）**
+- [「清らかな朝のような色」がそのまま色座標になる — 情景×時間帯で色を選ぶツール「時彩」を作った](https://zenn.dev/nekotrack/articles/9613d1a1df1f24) *(Zenn)*
+- [色を「選ぶ」より「出会う」— 時彩(TOKIIRO) で AI・デザインツールに渡すパレットを作る](https://note.com/nekotrack/n/n923cf8f27588) *(note)*
 
 **Oklch+ / Hue Modulation**
 
 - [OKLCH グラデーションで色かぶりが起きる理由と、なめらかな解消法](https://zenn.dev/nekotrack/articles/35849cff2ba1c4) *(Zenn)*
 - [OKLCH グラデーションで意図しない色が現れる理由](https://note.com/nekotrack/n/n822dd5bbcefd) *(note)*
-- [OKLCH 極座標補間の特異点を「滑らかに」解消する](#) *(Zenn — coming soon)*
-- [Oklch+ — 3パラメータで CIEDE2000 を超える色差改善の記録](#) *(Zenn — coming soon)*
+- [OKLCH 極座標補間の特異点を「滑らかに」解消する](https://zenn.dev/nekotrack/articles/7c3487c5a9375a) *(Zenn)*
+- [Oklch+ — 3パラメータで CIEDE2000 を超える色差改善の記録](https://zenn.dev/nekotrack/articles/290dea9ac90fa9) *(Zenn)*
 
 ---
 
