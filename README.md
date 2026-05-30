@@ -24,7 +24,7 @@ making quantitative interpretation of its individual STRESS score unreliable.
 
 ## Tools
 
-### `oklch_color_tool_TOKIIRO.html` — 時彩（ときいろ）Ver. β4
+### `TOKIIRO_v1.html` — 時彩（ときいろ）Ver. 1.0
 
 Narrative color selection tool based on OKLCH perceptual uniformity.
 Choose a **scene** (情景 → Hue) and **time of day** (時間帯 → L/C) to generate an AI-ready color system.

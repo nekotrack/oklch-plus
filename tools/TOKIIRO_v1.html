@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  時彩（ときいろ）Ver. β4
+  時彩（ときいろ）Ver. 1.0
   MIT License
   Copyright (c) 2026 nekotrack
   https://opensource.org/licenses/MIT
@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>時彩（ときいろ）— Ver. β4</title>
+  <title>時彩（ときいろ）— Ver. 1.0</title>
   <style>
     :root {
       --bg:      #1a1a1a;
@@ -42,8 +42,20 @@
       --ff-head: 'Anton', sans-serif;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* 外側デコレーション */
+    :root {
+      --deco-top:  rgba(56,189,248,0.35);
+      --footer-line: rgba(56,189,248,0.55);
+      --deco-glow: rgba(56,189,248,0.08);
+    }
+
     body {
-      background: var(--bg);
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse 100% 40% at 50% 0%,
+          var(--deco-top) 0%, transparent 100%);
+      background-attachment: fixed;
       color: var(--text);
       font-family: var(--ff-body);
       font-weight: 400;
@@ -53,7 +65,12 @@
       align-items: center;
       padding: 24px 16px;
     }
-    .wrap { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 16px; }
+    .wrap {
+      width: 100%; max-width: 480px;
+      display: flex; flex-direction: column; gap: 16px;
+      box-shadow: 0 0 80px var(--deco-glow);
+      border-radius: 2px;
+    }
 
     /* Header */
     .app-header { display: flex; align-items: baseline; gap: 10px; }
@@ -313,7 +330,7 @@
       border-radius: var(--r);
     }
     .fp-head {
-      font-family: var(--ff-head); font-size: var(--fs-preview-head, 18px); font-weight: 400;
+      font-family: var(--ff-head); font-size: var(--fs-preview-head, 18px); font-weight: 700;
       color: var(--text); margin-bottom: 5px; letter-spacing: .02em;
     }
     .fp-body {
@@ -347,6 +364,72 @@
       font-size: 11px; color: var(--orange);
       font-family: var(--mono); margin-bottom: 10px; margin-top: 4px;
     }
+    .theme-suggest-hint {
+      font-size: 11px; color: var(--dimmed);
+      font-family: var(--mono); margin-top: -2px; margin-bottom: 8px;
+      min-height: 14px; transition: color .2s;
+    }
+    .theme-suggest-hint.active { color: var(--sky); }
+    /* 用途グリッド */
+    .usage-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 6px; margin-bottom: 14px;
+    }
+    .usage-btn {
+      background: var(--surf2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 9px 8px; cursor: pointer;
+      text-align: center; transition: border-color .15s, background .15s;
+    }
+    .usage-btn:hover { border-color: var(--muted); }
+    .usage-btn.on {
+      border-color: var(--sky); background: rgba(56,189,248,.08);
+    }
+    .usage-nm {
+      font-size: 12px; font-weight: 700;
+      color: var(--text); display: block; margin-bottom: 3px;
+    }
+    .usage-sub {
+      font-size: 11px; color: var(--dimmed);
+      font-family: var(--ff-body); display: block;
+    }
+    .usage-btn.on .usage-nm  { color: var(--sky); }
+    .usage-btn.on .usage-sub { color: var(--sky); opacity: 0.7; }
+    /* WCAG パネル */
+    .wcag-panel {
+      margin-top: 12px; padding-top: 12px;
+      border-top: 1px solid var(--border);
+      flex-direction: column; gap: 6px;
+      display: none;
+    }
+    .wcag-hd {
+      font-size: 11px; color: var(--dimmed);
+      font-family: var(--mono); margin-bottom: 2px;
+      letter-spacing: .05em;
+    }
+    .wcag-row {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .wcag-pair {
+      font-size: 11px; font-family: var(--mono);
+      color: var(--muted); width: 124px; flex-shrink: 0;
+    }
+    .wcag-ratio {
+      font-size: 12px; font-weight: 700;
+      font-family: var(--mono); width: 52px; flex-shrink: 0;
+      text-align: right;
+    }
+    .wcag-badge {
+      font-size: 11px; font-family: var(--mono);
+      padding: 1px 7px; border-radius: 4px; flex-shrink: 0;
+    }
+    .wcag-aaa  { color: var(--green);  background: rgba(74,222,128,.10); }
+    .wcag-aa   { color: var(--sky);    background: rgba(56,189,248,.10); }
+    .wcag-fail { color: var(--orange); background: rgba(250,204,21,.10); }
+    .wcag-bar-wrap {
+      flex: 1; height: 3px;
+      background: var(--surf2); border-radius: 2px; overflow: hidden;
+    }
+    .wcag-bar { display: block; height: 100%; border-radius: 2px; }
     .manual-det {
       margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px;
     }
@@ -366,6 +449,41 @@
     .pal-theme-btn:hover { border-color: var(--muted); color: var(--text); }
     .pal-theme-btn.on { color: var(--sky); border-color: var(--sky); background: rgba(56,189,248,.10); }
     .gen-row { display: flex; margin-bottom: 14px; }
+    .wcag-mode-row {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .wcag-mode-btn {
+      font-size: 12px; font-family: var(--mono); font-weight: 700;
+      padding: 5px 12px; border-radius: 6px; cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--surf2); color: var(--muted);
+      transition: all .15s;
+    }
+    .wcag-mode-btn.on {
+      color: var(--green); border-color: var(--green);
+      background: rgba(74,222,128,.08);
+    }
+    .wcag-mode-lbl {
+      font-size: 11px; color: var(--dimmed); font-family: var(--mono);
+      transition: color .2s;
+    }
+    .wcag-mode-lbl.warn { color: var(--orange); }
+    .wcag-mode-lbl.ok   { color: var(--green);  }
+    .wcag-adj-info {
+      font-size: 11px; font-family: var(--mono);
+      color: var(--green); margin-bottom: 8px; margin-top: -4px;
+      padding: 4px 8px; border-radius: 4px;
+      background: rgba(74,222,128,.08);
+    }
+    .wcag-adj-info.wcag-adj-warn {
+      color: var(--orange);
+      background: rgba(250,204,21,.08);
+    }
+    .wcag-adj-badge {
+      font-size: 10px; font-family: var(--mono);
+      color: var(--green); margin-left: 4px;
+    }
     .pal-gen-btn {
       flex: 1; font-size: 13px; font-family: var(--mono); font-weight: 700;
       padding: 10px 0; border-radius: 8px; cursor: pointer;
@@ -373,6 +491,12 @@
     }
     .pal-gen-btn:hover { opacity: .88; }
     .pal-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 10px; margin-top: 16px; }
+    .pal-placeholder {
+      grid-column: 1 / -1; padding: 20px 0;
+      text-align: center; font-size: 12px;
+      color: var(--dimmed); font-family: var(--mono);
+      border: 1px dashed var(--border); border-radius: var(--r);
+    }
     .pal-sw-wrap { display: flex; flex-direction: column; gap: 3px; }
     .pal-sw {
       height: 44px; border-radius: 6px;
@@ -513,10 +637,23 @@
     body { padding-bottom: 148px; }
     .slider-footer {
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
-      background: rgba(30,41,59,0.97);
-      border-top: 1px solid var(--border);
-      backdrop-filter: blur(10px);
+      isolation: isolate;
+      background: color-mix(in srgb, var(--surface) 94%, transparent);
+      border-top: none;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       padding: 10px 16px 14px;
+    }
+    .slider-footer::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(
+        to right,
+        transparent 0%,
+        var(--footer-line) 30%,
+        var(--footer-line) 70%,
+        transparent 100%
+      );
     }
     .sf-inner {
       max-width: 480px; margin: 0 auto;
@@ -530,7 +667,7 @@
       .wrap, .sf-inner { max-width: 640px; }
     }
     @media (min-width: 1280px) {
-      .wrap, .sf-inner { max-width: 720px; }
+      .wrap, .sf-inner { max-width: 760px; }
     }
     .sf-group {
       display: flex; align-items: center; gap: 8px;
@@ -586,7 +723,7 @@
 
   <header class="app-header">
     <h1>時彩（ときいろ）</h1>
-    <span class="ver">Ver. β4</span>
+    <span class="ver">Ver. 1.0</span>
   </header><!-- /app-header -->
 
   <div class="tab-bar">
@@ -621,15 +758,28 @@
       <p class="bhint" id="bhint"></p>
     </details><!-- /manual-det -->
 
-    <!-- Step 3: 背景テーマ選択 -->
+    <!-- Step 3: 用途選択 -->
     <div class="step-row" style="margin-top:24px">
       <span class="step-num" id="sn3">3</span>
+      <span class="sec-lbl" style="margin:0">用途を選ぶ</span>
+    </div><!-- /step-row -->
+    <div class="usage-grid" id="usageGrid"></div><!-- /usage-grid -->
+    <!-- Step 4: 背景テーマ選択 -->
+    <div class="step-row" style="margin-top:8px">
+      <span class="step-num" id="sn4">4</span>
       <span class="sec-lbl" style="margin:0">背景テーマを選ぶ</span>
     </div><!-- /step-row -->
     <div class="theme-btn-row">
       <button class="pal-theme-btn on" id="palDark">Dark</button>
       <button class="pal-theme-btn"    id="palLight">Light</button>
     </div><!-- /theme-btn-row -->
+    <p class="theme-suggest-hint" id="themeSuggestHint"></p>
+
+    <!-- WCAG AA 保証トグル -->
+    <div class="wcag-mode-row">
+      <span class="wcag-mode-lbl" id="wcagModeLbl">WCAG AA 保証</span>
+      <button class="wcag-mode-btn" id="wcagModeBtn">AA 保証 OFF</button>
+    </div><!-- /wcag-mode-row -->
     <!-- パレット生成 -->
     <div class="gen-row">
       <button class="pal-gen-btn" id="palGenBtn">パレットを生成</button>
@@ -637,36 +787,49 @@
 
     <!-- フォント設定（折りたたみ） -->
     <details class="manual-det" id="fontDet">
-      <summary>フォント・サイズ設定を開く</summary>
-      <div class="font-section" style="margin-top:12px">
-        <div class="font-row">
-          <span class="font-row-lbl">本文</span>
-          <div class="font-opts" id="fontBodyOpts"></div>
-        </div><!-- /font-row -->
-        <div class="font-row">
-          <span class="font-row-lbl">見出し</span>
-          <div class="font-opts" id="fontHeadOpts"></div>
-        </div><!-- /font-row -->
-        <div class="font-row">
-          <span class="font-row-lbl">サイズ</span>
-          <div class="font-opts" id="fontSizeOpts"></div>
-        </div><!-- /font-row -->
-      </div><!-- /font-section -->
+      <summary>書体種別を選ぶ</summary>
+      <div class="usage-grid" id="fontStyleGrid" style="margin-top:12px"></div><!-- /fontStyleGrid -->
+
+      <details class="manual-det" style="margin-top:8px;border-top:none;padding-top:0">
+        <summary>個別に変更する</summary>
+        <div class="font-section" style="margin-top:12px">
+          <div class="font-row">
+            <span class="font-row-lbl">本文</span>
+            <div class="font-opts" id="fontBodyOpts"></div>
+          </div><!-- /font-row -->
+          <div class="font-row">
+            <span class="font-row-lbl">見出し</span>
+            <div class="font-opts" id="fontHeadOpts"></div>
+          </div><!-- /font-row -->
+          <div class="font-row">
+            <span class="font-row-lbl">サイズ</span>
+            <div class="font-opts" id="fontSizeOpts"></div>
+          </div><!-- /font-row -->
+        </div><!-- /font-section -->
+      </details>
     </details><!-- /fontDet -->
 
     <!-- パレット表示 -->
-    <div class="pal-grid" id="palGrid"></div><!-- /pal-grid -->
+    <div class="pal-grid" id="palGrid">
+      <div class="pal-placeholder">↑ 情景・時間帯・用途を選んで<br>パレットを生成してください</div>
+    </div><!-- /pal-grid -->
     <div class="pal-footer" id="palFooter" style="display:none">
       <button class="pal-css-btn" id="palCssBtn">md を書き出し</button>
       <button class="pal-css-btn" id="palCopyBtn">CSS をコピー</button>
       <span class="pal-hint">md → AI ツール　CSS → コードに直接貼る</span>
     </div><!-- /pal-footer -->
 
+    <!-- WCAG コントラスト -->
+    <div class="wcag-panel" id="wcagPanel">
+      <span class="wcag-hd">WCAG コントラスト比</span>
+      <div id="wcagRows"></div><!-- /wcagRows -->
+    </div><!-- /wcagPanel -->
+
     <!-- フォントプレビュー（常時表示） -->
     <div class="section-hd">見本</div>
     <div class="font-preview">
-      <div class="fp-head">時彩 / 見出し</div>
-      <div class="fp-body">色を選んで、雰囲気を決める。<br>The quick brown fox jumps.</div>
+      <div class="fp-head">時彩 / 見出し — Heading Sample Ag</div>
+      <div class="fp-body">色を選んで、雰囲気を決める。<br>The quick brown fox jumps over the lazy dog.</div>
       <div class="fp-btn-row">
         <button class="fp-btn" id="fpBtn">Sample</button>
         <span class="fp-btn-lbl" id="fpBtnLbl">メインボタン</span>
@@ -685,23 +848,7 @@
 
   </div><!-- /panel guide -->
 
-  <!-- 比較パネル -->
-  <div class="panel t-main">
-    <div class="cmp-grid">
-      <div class="cmp-half">
-        <div class="cmp-swatch" id="cmpA"></div><!-- /cmp-swatch A -->
-        <div class="cmp-lbl sky">OKLCH</div>
-        <div class="cmp-coords" id="cmpAcoords"></div>
-        <span class="gbadge g-srgb" id="cmpAgamut">● sRGB</span>
-      </div><!-- /cmp-half A -->
-      <div class="cmp-half">
-        <div class="cmp-swatch" id="cmpB"></div><!-- /cmp-swatch B -->
-        <div class="cmp-lbl violet">OKLCH+</div>
-        <div class="cmp-coords" id="cmpBcoords"></div>
-        <span class="gbadge g-srgb" id="cmpBgamut">● sRGB</span>
-      </div><!-- /cmp-half B -->
-    </div><!-- /cmp-grid -->
-  </div><!-- /panel compare -->
+  
 
   <!-- ══ Tab: 研究 ══ -->
   <div class="panel t-research" id="resPanel">
@@ -779,6 +926,25 @@
       </div><!-- /grad-side -->
     </div><!-- /grad-row -->
     <p class="strip-legend">← 無彩色 &nbsp;｜&nbsp; 実線 = 現在のC位置 &nbsp;｜&nbsp; 破線 = sRGBの限界 &nbsp;｜&nbsp; 最大彩度 →</p>
+
+    <!-- OKLCH / OKLCH+ 比較 -->
+    <div class="res-hd" style="margin-top:16px">
+      <span class="res-ttl">OKLCH / OKLCH+ 比較</span>
+    </div><!-- /res-hd -->
+    <div class="cmp-grid">
+      <div class="cmp-half">
+        <div class="cmp-swatch" id="cmpA"></div><!-- /cmp-swatch A -->
+        <div class="cmp-lbl sky">OKLCH</div>
+        <div class="cmp-coords" id="cmpAcoords"></div>
+        <span class="gbadge g-srgb" id="cmpAgamut">● sRGB</span>
+      </div><!-- /cmp-half A -->
+      <div class="cmp-half">
+        <div class="cmp-swatch" id="cmpB"></div><!-- /cmp-swatch B -->
+        <div class="cmp-lbl violet">OKLCH+</div>
+        <div class="cmp-coords" id="cmpBcoords"></div>
+        <span class="gbadge g-srgb" id="cmpBgamut">● sRGB</span>
+      </div><!-- /cmp-half B -->
+    </div><!-- /cmp-grid -->
   </div><!-- /panel research -->
 
   <!-- スライダー固定フッター（両タブで常時表示） -->
@@ -980,6 +1146,19 @@ function render() {
   const L = parseFloat(sL.value);
   const C = parseFloat(sC.value);
   const h = parseFloat(sH.value);
+
+    // 外側デコレーションを更新（時間帯L・Cに連動）
+  // 深夜(L=0.28)→decoL≈0.56  正午(L=0.68)→decoL≈0.76
+  const decoL   = 0.42 + L * 0.50;
+  const decoC   = 0.10 + C * 0.18;
+  const decoAlpTop  = 0.25 + L * 0.18;  // 0.30〜0.37
+  const decoAlpGlow = 0.06 + L * 0.06;  // 0.07〜0.10
+  const dR = Math.round(linToSRGB(Math.max(0, oklchToLin(decoL, decoC, h)[0])) * 255);
+  const dG = Math.round(linToSRGB(Math.max(0, oklchToLin(decoL, decoC, h)[1])) * 255);
+  const dB = Math.round(linToSRGB(Math.max(0, oklchToLin(decoL, decoC, h)[2])) * 255);
+  document.documentElement.style.setProperty('--deco-top',  `rgba(${dR},${dG},${dB},${decoAlpTop.toFixed(3)})`);
+  document.documentElement.style.setProperty('--deco-glow', `rgba(${dR},${dG},${dB},${decoAlpGlow.toFixed(3)})`);
+  document.documentElement.style.setProperty('--footer-line', `rgba(${dR},${dG},${dB},0.60)`);
 
   // 数値入力を同期
   nL.value = L.toFixed(3);
@@ -1423,7 +1602,7 @@ function liveApplyTheme() {
   const L = parseFloat(sL.value);
   const C = parseFloat(sC.value);
   const h = parseFloat(sH.value);
-  const pal = buildPalette(L, C, h, PAL_DARK);
+  const pal = buildPalette(L, C, h, PAL_DARK, SEL_USAGE);
   if (PAL_DARK) {
     const root = document.documentElement;
     pal.forEach(function(col) {
@@ -1536,14 +1715,18 @@ document.querySelectorAll('.cpybtn').forEach(function(btn) {
 
 // ── フォント選択 ──────────────────────────────────────────────────────────────
 const FONT_BODY = [
-  { id:'noto',   label:'Noto Sans JP', sub:'ゴシック', family:"'Noto Sans JP', sans-serif",        gf:'Noto+Sans+JP:wght@400;500;700' },
-  { id:'zen',    label:'Zen Gothic',   sub:'モダン',   family:"'Zen Kaku Gothic New', sans-serif", gf:'Zen+Kaku+Gothic+New:wght@400;700' },
-  { id:'system', label:'システム',     sub:'高速',     family:'system-ui, sans-serif',             gf:null },
+  { id:'noto',   label:'Noto Sans JP',    sub:'ゴシック',   family:"'Noto Sans JP', sans-serif",        gf:'Noto+Sans+JP:wght@400;500;700' },
+  { id:'zen',    label:'Zen Gothic',      sub:'モダン',     family:"'Zen Kaku Gothic New', sans-serif", gf:'Zen+Kaku+Gothic+New:wght@400;700' },
+  { id:'ud',     label:'BIZ UDPゴシック', sub:'UD対応',     family:"'BIZ UDPGothic', sans-serif",      gf:'BIZ+UDPGothic:wght@400;700' },
+  { id:'mincho', label:'Shippori Mincho', sub:'明朝体',     family:"'Shippori Mincho', serif",          gf:'Shippori+Mincho:wght@400;700' },
+  { id:'system', label:'システム',        sub:'高速',       family:'system-ui, sans-serif',             gf:null },
 ];
 const FONT_HEAD = [
-  { id:'same',   label:'本文と同じ', sub:'統一感',    family:null },
-  { id:'anton',  label:'Anton',      sub:'インパクト', family:"'Anton', sans-serif",             gf:'Anton' },
-  { id:'mincho', label:'明朝体',     sub:'格調',      family:"'Shippori Mincho', serif",         gf:'Shippori+Mincho:wght@400;700' },
+  { id:'same',   label:'本文と同じ',  sub:'統一感',    family:null },
+  { id:'zen',    label:'Zen Gothic',  sub:'モダン',    family:"'Zen Kaku Gothic New', sans-serif", gf:'Zen+Kaku+Gothic+New:wght@400;700' },
+  { id:'ud',     label:'BIZ UDP',     sub:'UD対応',    family:"'BIZ UDPGothic', sans-serif",      gf:'BIZ+UDPGothic:wght@400;700' },
+  { id:'anton',  label:'Anton',       sub:'インパクト', family:"'Anton', sans-serif",              gf:'Anton' },
+  { id:'mincho', label:'明朝体',      sub:'格調',      family:"'Shippori Mincho', serif",          gf:'Shippori+Mincho:wght@400;700' },
 ];
 const FONT_SIZE = [
   { id:'compact',  label:'コンパクト', sub:'密度重視',   base:14, lg:18, xl:28 },
@@ -1599,13 +1782,14 @@ makeFontBtns(document.getElementById('fontSizeOpts'), FONT_SIZE,
   function() { return SEL_FSIZE; }, function(v) { SEL_FSIZE = v; });
 
 // ── 2段階カラー選択 ───────────────────────────────────────────────────────────
+// 情景カテゴリ（代表和色 colordic.org 参照）
 const CATEGORIES = [
-  { id:'flame',    label:'茜・緋', sub:'茜に染まる',  h:25,  L:0.55, C:0.18 },
-  { id:'wheat',    label:'柿・麦', sub:'実りの季節',  h:60,  L:0.61, C:0.13 },
-  { id:'forest',   label:'柳・翠', sub:'翡翠の輝き',  h:160, L:0.56, C:0.12 },
-  { id:'sea',      label:'空・海', sub:'初夏の青',    h:225, L:0.65, C:0.15 },
-  { id:'mist',     label:'露・藍', sub:'藍に露',      h:264, L:0.46, C:0.10 },
-  { id:'wisteria', label:'藤・宵', sub:'宵待ちの藤',  h:315, L:0.40, C:0.10 },
+  { id:'flame',    label:'茜・緋', sub:'茜に染まる',  h:24,  L:0.51, C:0.18 }, // 茜色 #b7282e
+  { id:'wheat',    label:'柿・麦', sub:'実りの季節',  h:40,  L:0.68, C:0.17 }, // 柿色 #ed6d3d
+  { id:'forest',   label:'柳・翠', sub:'翡翠の輝き',  h:157, L:0.73, C:0.11 }, // 若竹色 #68be8d
+  { id:'sea',      label:'空・海', sub:'初夏の青',    h:225, L:0.65, C:0.15 }, // 空色 #a0d8ef
+  { id:'mist',     label:'露・藍', sub:'藍に露',      h:274, L:0.50, C:0.14 }, // 花色 #4d5aaf
+  { id:'wisteria', label:'藤・宵', sub:'宵待ちの藤',  h:304, L:0.51, C:0.11 }, // 江戸紫 #745399
 ];
 
 const MOODS = [
@@ -1621,6 +1805,160 @@ let SEL_CAT  = null;
 let SEL_MOOD = null;
 let PAL_DARK = true;
 let lastPalette = null;
+let THEME_OVERRIDDEN = false;
+
+// 用途プリセット
+const USAGES = [
+  { id:'webui',   label:'Web UI',        sub:'日々の出来事' },
+  { id:'market',  label:'マーケティング', sub:'初めての印象' },
+  { id:'a11y',    label:'アクセシビリティ', sub:'誰かのために' },
+  { id:'reading', label:'読み物',         sub:'静かな余白'  },
+];
+let SEL_USAGE = 'webui';
+
+// 用途 → 推奨書体種別
+const USAGE_FONT_MAP = {
+  webui:   'gothic',
+  market:  'modern',
+  a11y:    'ud',
+  reading: 'mixed',
+};
+
+// 書体種別プリセット
+const FONT_STYLES = [
+  { id:'gothic', label:'ゴシック',       sub:'明快・現代的',      bodyId:'noto',   headId:'same',  sizeId:'standard', headWeight:'700' },
+  { id:'modern', label:'モダンゴシック',  sub:'洗練・都会的',      bodyId:'noto',   headId:'zen',   sizeId:'large',    headWeight:'700' },
+  { id:'ud',     label:'UDゴシック',     sub:'読みやすさ特化',    bodyId:'ud',     headId:'ud',    sizeId:'standard', headWeight:'700' },
+  { id:'mixed',  label:'ゴシック×明朝',  sub:'読みやすさ・奥行き', bodyId:'noto',   headId:'mincho',sizeId:'large',    headWeight:'400' },
+];
+let SEL_FONT_STYLE = 'gothic';
+
+function applyFontStyle(styleId) {
+  SEL_FONT_STYLE = styleId;
+  const fs = FONT_STYLES.find(function(s){ return s.id === styleId; });
+  if (!fs) return;
+
+  const fb = FONT_BODY.find(function(b){ return b.id === fs.bodyId; });
+  const fh = FONT_HEAD.find(function(h){ return h.id === fs.headId; });
+  const fz = FONT_SIZE.find(function(z){ return z.id === fs.sizeId; });
+
+  if (fb) SEL_FBODY = fb;
+  if (fh) SEL_FHEAD = fh;
+  if (fz) SEL_FSIZE = fz;
+
+  const bodyFamily = fb ? fb.family : SEL_FBODY.family;
+  const headFamily = (fh && fh.family) ? fh.family : bodyFamily;
+
+  // Google Fontsをロード
+  if (fb && fb.gf) loadGFont(fb.gf, null);
+  if (fh && fh.gf) loadGFont(fh.gf, null);
+
+  // CSS変数に直接セット
+  const root = document.documentElement;
+  root.style.setProperty('--ff-body', bodyFamily);
+  root.style.setProperty('--ff-head', headFamily);
+  if (fz) {
+    root.style.setProperty('--fs-preview-head', fz.lg   + 'px');
+    root.style.setProperty('--fs-preview-body', fz.base + 'px');
+  }
+
+  // フォントプレビューに直接適用（CSS変数バイパス）
+  const fpHead = document.querySelector('.fp-head');
+  const fpBody = document.querySelector('.fp-body');
+  const hw = fs.headWeight || '700';
+  if (fpHead) { fpHead.style.fontFamily = headFamily; fpHead.style.fontWeight = hw; }
+  if (fpBody) fpBody.style.fontFamily = bodyFamily;
+  // CSS変数にも反映
+  document.documentElement.style.setProperty('--font-weight-heading', hw);
+
+  if (lastPalette) applyFontPreviewTheme(lastPalette);
+}
+
+// 時間帯 → 推奨テーマ（true=Dark）
+const MOOD_THEME = {
+  midnight: true,
+  dawn:     true,
+  morning:  false,
+  noon:     false,
+  dusk:     true,
+  evening:  true,
+};
+
+function updateThemeHint(isSuggested) {
+  const el = document.getElementById('themeSuggestHint');
+  if (!el) return;
+  if (isSuggested) {
+    el.textContent = '✦ 時間帯から提案';
+    el.classList.add('active');
+  } else {
+    el.textContent = '';
+    el.classList.remove('active');
+  }
+}
+
+// 用途グリッド生成
+(function() {
+  const grid = document.getElementById('usageGrid');
+  if (!grid) return;
+  USAGES.forEach(function(u) {
+    const btn = document.createElement('button');
+    btn.className = 'usage-btn' + (u.id === SEL_USAGE ? ' on' : '');
+    btn.dataset.id = u.id;
+    btn.innerHTML =
+      '<span class="usage-nm">' + u.label + '</span>' +
+      '<span class="usage-sub">' + u.sub + '</span>';
+    btn.addEventListener('click', function() {
+      SEL_USAGE = u.id;
+      grid.querySelectorAll('.usage-btn').forEach(function(b) { b.classList.remove('on'); });
+      btn.classList.add('on');
+      const sn3el = document.getElementById('sn3');
+      if (sn3el) sn3el.classList.add('done');
+      // 書体種別を連動提案
+      var suggestedFont = USAGE_FONT_MAP[u.id];
+      if (suggestedFont) {
+        applyFontStyle(suggestedFont);
+        // fontStyleGridのon状態を更新
+        var fsg = document.getElementById('fontStyleGrid');
+        if (fsg) {
+          fsg.querySelectorAll('.usage-btn').forEach(function(b) { b.classList.remove('on'); });
+          var fb2 = fsg.querySelector('[data-id="' + suggestedFont + '"]');
+          if (fb2) fb2.classList.add('on');
+        }
+      }
+      if (SEL_CAT && SEL_MOOD) autoGenPalette();
+    });
+    grid.appendChild(btn);
+  });
+})();
+
+// 書体種別グリッド生成（details open時に初期化）
+function initFontStyleGrid() {
+  const grid = document.getElementById('fontStyleGrid');
+  if (!grid || grid.dataset.initialized) return;
+  grid.dataset.initialized = '1';
+  FONT_STYLES.forEach(function(fs) {
+    const btn = document.createElement('button');
+    btn.className = 'usage-btn' + (fs.id === SEL_FONT_STYLE ? ' on' : '');
+    btn.dataset.id = fs.id;
+    btn.innerHTML =
+      '<span class="usage-nm">' + fs.label + '</span>' +
+      '<span class="usage-sub">' + fs.sub + '</span>';
+    btn.addEventListener('click', function() {
+      grid.querySelectorAll('.usage-btn').forEach(function(b){ b.classList.remove('on'); });
+      btn.classList.add('on');
+      applyFontStyle(fs.id);
+    });
+    grid.appendChild(btn);
+  });
+}
+// fontDetが開いた時に初期化（初回はIIFEでも試みる）
+(function() { initFontStyleGrid(); })();
+var fontDetEl = document.getElementById('fontDet');
+if (fontDetEl) {
+  fontDetEl.addEventListener('toggle', function() {
+    if (this.open) initFontStyleGrid();
+  });
+}
 
 // カテゴリグリッド生成
 const catGrid  = document.getElementById('catGrid');
@@ -1711,13 +2049,30 @@ function renderTimeStrip() {
 
     item.addEventListener('click', function() {
       SEL_MOOD = time;
+      THEME_OVERRIDDEN = false;
+      // 時間帯から推奨テーマを適用
+      const suggested = MOOD_THEME[time.id];
+      if (suggested !== undefined) {
+        PAL_DARK = suggested;
+        palDarkBtn.classList.toggle('on',  suggested);
+        palLightBtn.classList.toggle('on', !suggested);
+        updateThemeHint(true);
+      }
       const sn2 = document.getElementById('sn2');
       if (sn2) sn2.classList.add('done');
-      const sn3 = document.getElementById('sn3');
-      if (sn3) sn3.classList.add('done');
+      const sn4 = document.getElementById('sn4');
+      if (sn4) sn4.classList.add('done');
       updateFooterLabel();
       renderTimeStrip();
       applySelection();
+    
+      // 時間帯選択後：Step3（用途）へスクロール（初期ロード時は除外）
+      if (PAGE_LOADED) {
+        setTimeout(function() {
+          const target = document.getElementById('sn3');
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 350);
+      }
     });
 
     strip.appendChild(item);
@@ -1738,13 +2093,15 @@ function applySelection() {
 const palDarkBtn  = document.getElementById('palDark');
 const palLightBtn = document.getElementById('palLight');
 palDarkBtn.addEventListener('click',  function(){
-  PAL_DARK=true;
+  PAL_DARK=true; THEME_OVERRIDDEN=true;
   palDarkBtn.classList.add('on');  palLightBtn.classList.remove('on');
+  updateThemeHint(false);
   if(SEL_CAT&&SEL_MOOD) autoGenPalette();
 });
 palLightBtn.addEventListener('click', function(){
-  PAL_DARK=false;
+  PAL_DARK=false; THEME_OVERRIDDEN=true;
   palLightBtn.classList.add('on'); palDarkBtn.classList.remove('on');
+  updateThemeHint(false);
   if(SEL_CAT&&SEL_MOOD) autoGenPalette();
 });
 
@@ -1754,35 +2111,212 @@ palGenBtn.addEventListener('click', function() {
   autoGenPalette(parseFloat(sL.value), parseFloat(sC.value), parseFloat(sH.value));
   setTimeout(function() {
     const pg = document.getElementById('palGrid');
-    if (pg) pg.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 80);
+    if (pg) pg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 120);
 });
 
 function clampL(v){ return Math.max(0.05, Math.min(0.99, v)); }
 
-function buildPalette(L, C, h, dark) {
+// Oklch+ L軸均質ステップ（L' = L^0.73 空間で等差分割）
+function oklchPlusStep(L0, L1, steps, i) {
+  const lp0 = Math.pow(L0, OP_A);
+  const lp1 = Math.pow(L1, OP_A);
+  const lp  = lp0 + (lp1 - lp0) / steps * i;
+  return Math.pow(Math.max(0, lp), 1 / OP_A);
+}
+
+function buildPalette(L, C, h, dark, usage) {
+  usage = usage || 'webui';
+
+  // ── ニュートラルベース ──────────────────────────────────────────────
+  let bg  = dark ? 0.09 : 0.98;
+  let brd = dark ? 0.26 : 0.82;
+  let textL = dark ? 0.93 : 0.12;
+  let bgC = 0.015, sfC = 0.015, sf2C = 0.02;
+
+  // ── 用途別調整 ────────────────────────────────────────────────────
+  let primL = clampL(L);
+  let primC = C;
+
+  if (usage === 'market') {
+    // 背景に色みを乗せ、primaryを鮮やかに
+    bgC  = 0.028; sfC = 0.022; sf2C = 0.030;
+    primC = Math.min(C * 1.15, 0.32);
+
+  } else if (usage === 'a11y') {
+    // コントラスト拡大：bg を暗く/明るく、text を遠ざける
+    bg    = dark ? 0.06 : 0.99;
+    textL = dark ? 0.97 : 0.06;
+    brd   = dark ? 0.28 : 0.80;
+    // primary の明度を AA保証範囲に寄せる
+    if (dark  && primL < 0.55) primL = 0.55;
+    if (!dark && primL > 0.42) primL = 0.42;
+
+  } else if (usage === 'reading') {
+    // アクセント抑制：中性的な背景、primCを絞る
+    bgC  = 0.008; sfC = 0.008; sf2C = 0.010;
+    primC = C * 0.65;
+  }
+
+  const sf  = oklchPlusStep(bg, brd, 3, 1);
+  const sf2 = oklchPlusStep(bg, brd, 3, 2);
+
+  // WCAG AA 保証モード：primary L を調整
+  WCAG_ADJ_AMOUNT = 0;
+  if (WCAG_MODE) {
+    const adjL = adjustPrimaryL(primL, primC, h, bg, bgC, h, dark);
+    if (Math.abs(adjL - primL) > 0.005) {
+      WCAG_ADJ_AMOUNT = adjL - primL;
+      primL = adjL;
+    }
+  }
+
   return [
-    { name:'primary',     L:clampL(L),      C,          h },
-    { name:'primary-sub', L:clampL(L+0.13), C:C*0.60,   h },
-    { name:'bg',          L:dark?0.09:0.98, C:0.015,    h },
-    { name:'surface',     L:dark?0.14:0.94, C:0.015,    h },
-    { name:'surface-2',   L:dark?0.20:0.89, C:0.02,     h },
-    { name:'text',        L:dark?0.93:0.12, C:0.01,     h },
-    { name:'muted',       L:dark?0.60:0.46, C:0.01,     h },
-    { name:'border',      L:dark?0.26:0.82, C:0.02,     h },
-    { name:'success',     L:dark?0.72:0.55, C:0.18, h:145 },
-    { name:'warning',     L:dark?0.84:0.66, C:0.15, h:90  },
-    { name:'error',       L:dark?0.62:0.50, C:0.22, h:25  },
+    { name:'primary',     L:primL,              C:primC,       h },
+    { name:'primary-sub', L:clampL(primL+0.13), C:primC*0.60,  h },
+    { name:'bg',          L:bg,                 C:bgC,         h },
+    { name:'surface',     L:sf,                 C:sfC,         h },
+    { name:'surface-2',   L:sf2,                C:sf2C,        h },
+    { name:'text',        L:textL,              C:0.01,        h },
+    { name:'muted',       L:dark?0.60:0.46,     C:0.01,        h },
+    { name:'border',      L:brd,                C:0.02,        h },
+    { name:'success',     L:dark?0.72:0.55,     C:0.18,    h:145 },
+    { name:'warning',     L:dark?0.84:0.66,     C:0.15,    h:90  },
+    { name:'error',       L:dark?0.62:0.50,     C:0.22,    h:25  },
   ];
+}
+
+// ── WCAG AA 保証モード ───────────────────────────────────────────────────────
+let WCAG_MODE = false;
+let PAGE_LOADED = false;  // 初期ロード完了フラグ
+let WCAG_ADJ_AMOUNT = 0;  // 調整量（表示用）
+
+function adjustPrimaryL(primL, primC, h, bgL, bgC, bgH, dark) {
+  const ratio = wcagRatio(primL, primC, h, bgL, bgC, bgH);
+  if (ratio >= 4.5) return primL;  // 既にAA通過
+  if (dark) {
+    // 明るくする（L を上げる）
+    let lo = primL, hi = 0.99;
+    for (let i = 0; i < 32; i++) {
+      const mid = (lo + hi) / 2;
+      wcagRatio(mid, primC, h, bgL, bgC, bgH) >= 4.5 ? (hi = mid) : (lo = mid);
+    }
+    return hi;
+  } else {
+    // 暗くする（L を下げる）
+    let lo = 0.01, hi = primL;
+    for (let i = 0; i < 32; i++) {
+      const mid = (lo + hi) / 2;
+      wcagRatio(mid, primC, h, bgL, bgC, bgH) >= 4.5 ? (lo = mid) : (hi = mid);
+    }
+    return lo;
+  }
+}
+
+// ── WCAG コントラスト比 ───────────────────────────────────────────────────
+function wcagLuminance(L, C, h) {
+  // oklchToLin は linear sRGB を返すのでそのまま使用
+  const lin = oklchToLin(L, C, h);
+  return 0.2126 * Math.max(0, lin[0])
+       + 0.7152 * Math.max(0, lin[1])
+       + 0.0722 * Math.max(0, lin[2]);
+}
+
+function wcagRatio(L1, C1, h1, L2, C2, h2) {
+  const y1 = wcagLuminance(L1, C1, h1);
+  const y2 = wcagLuminance(L2, C2, h2);
+  const bright = Math.max(y1, y2), dark = Math.min(y1, y2);
+  return (bright + 0.05) / (dark + 0.05);
+}
+
+function wcagLevel(ratio, large) {
+  if (ratio >= 7.0) return { label: 'AAA', cls: 'wcag-aaa' };
+  if (ratio >= 4.5) return { label: 'AA',  cls: 'wcag-aa'  };
+  if (ratio >= 3.0 && large) return { label: 'AA (大)', cls: 'wcag-aa' };
+  return { label: '未達', cls: 'wcag-fail' };
+}
+
+function renderWcag(pal) {
+  const panel = document.getElementById('wcagPanel');
+  const rows  = document.getElementById('wcagRows');
+  if (!panel || !rows) return;
+
+  const get = function(name) { return pal.find(function(p) { return p.name === name; }); };
+  const adjBadge = (WCAG_MODE && Math.abs(WCAG_ADJ_AMOUNT) > 0.005)
+    ? '<span class="wcag-adj-badge">✦ L' + (WCAG_ADJ_AMOUNT > 0 ? '+' : '') + WCAG_ADJ_AMOUNT.toFixed(3) + '調整</span>'
+    : '';
+
+  const pairs = [
+    { label: 'text / bg',         a: get('text'),    b: get('bg'),      large: false },
+    { label: 'primary / bg',      a: get('primary'), b: get('bg'),      large: true  },
+    { label: 'primary-sub / bg',  a: get('primary-sub'), b: get('bg'),  large: true  },
+    { label: 'muted / bg',        a: get('muted'),   b: get('bg'),      large: false, note: true },
+  ];
+
+  rows.innerHTML = '';
+  pairs.forEach(function(p) {
+    if (!p.a || !p.b) return;
+    const ratio = wcagRatio(p.a.L, p.a.C, p.a.h, p.b.L, p.b.C, p.b.h);
+    const lv    = wcagLevel(ratio, p.large);
+    const pct   = Math.min(100, (ratio / 21) * 100);
+    const barColor = lv.cls === 'wcag-fail' ? 'var(--orange)' :
+                     lv.cls === 'wcag-aaa'  ? 'var(--green)'  : 'var(--sky)';
+
+    const noteHtml = p.note
+      ? '<span style="font-size:10px;color:var(--dimmed);font-family:var(--mono);margin-left:4px;">補足用</span>'
+      : '';
+    const row = document.createElement('div');
+    row.className = 'wcag-row';
+    row.innerHTML =
+      '<span class="wcag-pair">' + p.label + (p.name === 'primary' ? adjBadge : '') + '</span>' +
+      '<span class="wcag-ratio">' + ratio.toFixed(1) + ':1</span>' +
+      '<span class="wcag-badge ' + lv.cls + '">' + lv.label + '</span>' +
+      noteHtml +
+      '<span class="wcag-bar-wrap"><span class="wcag-bar" style="width:' +
+        pct.toFixed(1) + '%;background:' + barColor + '"></span></span>';
+    rows.appendChild(row);
+  });
+
+  panel.style.display = 'flex';
 }
 
 function autoGenPalette(L, C, h) {
   L = L ?? parseFloat(sL.value);
   C = C ?? parseFloat(sC.value);
   h = h ?? parseFloat(sH.value);
-  lastPalette = buildPalette(L, C, h, PAL_DARK);
+  lastPalette = buildPalette(L, C, h, PAL_DARK, SEL_USAGE);
   renderPalette(lastPalette);
   document.getElementById('palFooter').style.display = 'flex';
+  renderWcag(lastPalette);
+
+  // AA保証ラベルをステータス表示に更新
+  (function() {
+    const lbl = document.getElementById('wcagModeLbl');
+    const btn = document.getElementById('wcagModeBtn');
+    if (!lbl) return;
+    const primCol = lastPalette.find(function(p){ return p.name === 'primary'; });
+    const bgCol   = lastPalette.find(function(p){ return p.name === 'bg'; });
+    const ratio   = (primCol && bgCol)
+      ? wcagRatio(primCol.L, primCol.C, primCol.h, bgCol.L, bgCol.C, bgCol.h)
+      : 99;
+
+    if (WCAG_MODE && Math.abs(WCAG_ADJ_AMOUNT) > 0.005) {
+      lbl.className = 'wcag-mode-lbl ok';
+      lbl.textContent = '✦ ΔL ' + (WCAG_ADJ_AMOUNT > 0 ? '+' : '')
+        + WCAG_ADJ_AMOUNT.toFixed(3) + ' 調整済み';
+    } else if (WCAG_MODE) {
+      lbl.className = 'wcag-mode-lbl ok';
+      lbl.textContent = '✦ 調整不要';
+    } else if (ratio < 4.5) {
+      lbl.className = 'wcag-mode-lbl warn';
+      lbl.textContent = '⚠ 未達 ' + ratio.toFixed(1) + ':1';
+      if (btn) btn.textContent = 'AA 保証 ON で修正';
+    } else {
+      lbl.className = 'wcag-mode-lbl';
+      lbl.textContent = 'WCAG AA 保証';
+      if (btn && !WCAG_MODE) btn.textContent = 'AA 保証 OFF';
+    }
+  })();
   applyTheme(lastPalette);
   applyFontPreviewTheme(lastPalette);
   showPromptExample();
@@ -1892,6 +2426,34 @@ function renderPalette(pal) {
   });
 }
 
+function wcagMdSection(pal) {
+  const get = function(name) { return pal.find(function(p) { return p.name === name; }); };
+  const adjBadge = (WCAG_MODE && Math.abs(WCAG_ADJ_AMOUNT) > 0.005)
+    ? '<span class="wcag-adj-badge">✦ L' + (WCAG_ADJ_AMOUNT > 0 ? '+' : '') + WCAG_ADJ_AMOUNT.toFixed(3) + '調整</span>'
+    : '';
+
+  const pairs = [
+    { name:'text',        label: 'text / bg',        a: get('text'),        b: get('bg'), large: false, note: '' },
+    { name:'primary',     label: 'primary / bg',     a: get('primary'),     b: get('bg'), large: true,  note: '' },
+    { name:'primary-sub', label: 'primary-sub / bg', a: get('primary-sub'), b: get('bg'), large: true,  note: '' },
+    { name:'muted',       label: 'muted / bg',       a: get('muted'),       b: get('bg'), large: false, note: '補足テキスト用（装飾可）' },
+  ];
+  const lines = ['```'];
+  pairs.forEach(function(p) {
+    if (!p.a || !p.b) return;
+    const ratio = wcagRatio(p.a.L, p.a.C, p.a.h, p.b.L, p.b.C, p.b.h);
+    const lv = wcagLevel(ratio, p.large);
+    const note = p.note ? '  # ' + p.note : '';
+    lines.push(
+      (p.label + '              ').slice(0, 20) +
+      (ratio.toFixed(1) + ':1     ').slice(0, 8) +
+      lv.label + note
+    );
+  });
+  lines.push('```');
+  return lines.join('\n');
+}
+
 function buildMd(pal) {
   const catLabel  = SEL_CAT  ? SEL_CAT.label  : '未選択';
   const catSub    = SEL_CAT  ? SEL_CAT.sub    : '';
@@ -1972,7 +2534,7 @@ function buildMd(pal) {
   const typo = [
     '## 4. Typography',
     '- 本文フォント：' + SEL_FBODY.label,
-    '- 見出しフォント：' + headLabel,
+    '- 見出しフォント：' + headLabel + '（Bold 700）',
     '- サイズ：本文 ' + SEL_FSIZE.base + 'px / 小見出し ' + SEL_FSIZE.lg + 'px / 大見出し ' + SEL_FSIZE.xl + 'px',
   ];
   if (gfUrl) {
@@ -2006,6 +2568,9 @@ function buildMd(pal) {
     '',
     typo.join('\n'),
     '',
+    '## 8. WCAG コントラスト比',
+    wcagMdSection(pal),
+    '',
     '## 9. Agent Prompt Guide',
     '',
     '### クイックリファレンス',
@@ -2030,6 +2595,7 @@ function buildCss(pal) {
       'oklch(' + col.L.toFixed(3) + ' ' + col.C.toFixed(3) + ' ' + col.h + ');');
   });
   lines.push('  --font-body:    ' + bodyFamily + ';');
+  lines.push('  --font-heading-weight: ' + (FONT_STYLES.find(function(s){return s.id===SEL_FONT_STYLE;})||{headWeight:'700'}).headWeight + ';');
   lines.push('  --font-heading: ' + headFamily + ';');
   lines.push('  --text-sm:   ' + (SEL_FSIZE.base - 2) + 'px;');
   lines.push('  --text-base: ' + SEL_FSIZE.base + 'px;');
@@ -2091,6 +2657,19 @@ function applyTheme(pal) {
   LC_CACHE = { h: null, imgData: null };
   render();
 }
+
+// WCAG AA 保証トグル
+(function() {
+  const btn = document.getElementById('wcagModeBtn');
+  const lbl = document.getElementById('wcagModeLbl');
+  if (!btn) return;
+  btn.addEventListener('click', function() {
+    WCAG_MODE = !WCAG_MODE;
+    btn.textContent = WCAG_MODE ? 'AA 保証 ON' : 'AA 保証 OFF';
+    btn.classList.toggle('on', WCAG_MODE);
+    if (SEL_CAT && SEL_MOOD) autoGenPalette();
+  });
+})();
 
 // フッターのカラーラベルを更新
 function updateFooterLabel() {
@@ -2222,6 +2801,7 @@ initCanvases();
   updateFooterLabel();
   renderTimeStrip();
   applySelection();
+  setTimeout(function() { PAGE_LOADED = true; }, 600);
 })();
 </script>
 </body>
