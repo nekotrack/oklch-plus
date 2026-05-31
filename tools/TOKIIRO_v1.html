@@ -2132,7 +2132,7 @@ function buildPalette(L, C, h, dark, usage) {
   let bg  = dark ? 0.09 : 0.98;
   let brd = dark ? 0.26 : 0.82;
   let textL = dark ? 0.93 : 0.12;
-  let bgC = 0.015, sfC = 0.015, sf2C = 0.02;
+  let bgC = 0.000, sfC = 0.000, sf2C = 0.000;
 
   // ── 用途別調整 ────────────────────────────────────────────────────
   let primL = clampL(L);
@@ -2140,12 +2140,12 @@ function buildPalette(L, C, h, dark, usage) {
 
   if (usage === 'market') {
     // 背景に色みを乗せ、primaryを鮮やかに
-    bgC  = 0.028; sfC = 0.022; sf2C = 0.030;
+    bgC  = 0.000; sfC = 0.000; sf2C = 0.000;
     primC = Math.min(C * 1.15, 0.32);
 
   } else if (usage === 'a11y') {
     // コントラスト拡大：bg を暗く/明るく、text を遠ざける
-    bg    = dark ? 0.06 : 0.99;
+    bg    = dark ? 0.08 : 0.99;
     textL = dark ? 0.97 : 0.06;
     brd   = dark ? 0.28 : 0.80;
     // primary の明度を AA保証範囲に寄せる
@@ -2154,7 +2154,7 @@ function buildPalette(L, C, h, dark, usage) {
 
   } else if (usage === 'reading') {
     // アクセント抑制：中性的な背景、primCを絞る
-    bgC  = 0.008; sfC = 0.008; sf2C = 0.010;
+    bgC  = 0.000; sfC = 0.000; sf2C = 0.000;
     primC = C * 0.65;
   }
 
