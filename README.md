@@ -102,6 +102,8 @@ with hue control at high chroma.
 **時彩（ときいろ / TOKIIRO）**
 - [「清らかな朝のような色」がそのまま色座標になる — 情景×時間帯で色を選ぶツール「時彩」を作った](https://zenn.dev/nekotrack/articles/9613d1a1df1f24) *(Zenn)*
 - [色を「選ぶ」より「出会う」— 時彩(TOKIIRO) で AI・デザインツールに渡すパレットを作る](https://note.com/nekotrack/n/n923cf8f27588) *(note)*
+- [OKLCH の L だけ動かして WCAG AA を保証する — 時彩 Ver. 1.0 と二分探索の話](https://zenn.dev/nekotrack/articles/3c6e176fcfe34f) *(Zenn)*
+- [色を「決める」から「整える」へ — 時彩 1.0 で見えた、AI に渡す前の準備](https://note.com/nekotrack/n/n0c2863524cd8) *(note)*
 
 **Oklch+ / Hue Modulation**
 

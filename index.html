@@ -454,6 +454,28 @@
   }
 
   /* ── 記事一覧 ── */
+  .article-group + .article-group { margin-top: 40px; }
+
+  .article-group-label {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+
+  .article-group-label::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--primary);
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
   .articles-list {
     display: flex;
     flex-direction: column;
@@ -810,38 +832,58 @@ Differentiable and continuous at all points.</pre>
   <!-- ── ARTICLES ── -->
   <section id="articles">
     <p class="section-label reveal">Articles</p>
-    <div class="articles-list reveal">
-      <a href="https://zenn.dev/nekotrack/articles/9613d1a1df1f24" target="_blank" class="article-item">
-        <span class="article-num">01</span>
-        <span class="article-title">「清らかな朝のような色」がそのまま色座標になる — 情景×時間帯で色を選ぶツール「時彩」を作った</span>
-        <span class="article-platform">ZENN →</span>
-      </a><!-- /article-item -->
-      <a href="https://note.com/nekotrack/n/n923cf8f27588" target="_blank" class="article-item">
-        <span class="article-num">02</span>
-        <span class="article-title">色を「選ぶ」より「出会う」— 時彩(TOKIIRO) で AI・デザインツールに渡すパレットを作る</span>
-        <span class="article-platform">NOTE →</span>
-      </a><!-- /article-item -->
-      <a href="https://zenn.dev/nekotrack/articles/35849cff2ba1c4" target="_blank" class="article-item">
-        <span class="article-num">03</span>
-        <span class="article-title">OKLCH グラデーションで色かぶりが起きる理由と、なめらかな解消法</span>
-        <span class="article-platform">ZENN →</span>
-      </a><!-- /article-item -->
-      <a href="https://note.com/nekotrack/n/n822dd5bbcefd" target="_blank" class="article-item">
-        <span class="article-num">04</span>
-        <span class="article-title">OKLCH グラデーションで意図しない色が現れる理由</span>
-        <span class="article-platform">NOTE →</span>
-      </a><!-- /article-item -->
-      <a href="https://zenn.dev/nekotrack/articles/7c3487c5a9375a" target="_blank" class="article-item">
-        <span class="article-num">05</span>
-        <span class="article-title">OKLCH 極座標補間の特異点を「滑らかに」解消する</span>
-        <span class="article-platform">ZENN →</span>
-      </a><!-- /article-item -->
-      <a href="https://zenn.dev/nekotrack/articles/290dea9ac90fa9" target="_blank" class="article-item">
-        <span class="article-num">06</span>
-        <span class="article-title">Oklch+ — 3パラメータで CIEDE2000 を超える色差改善の記録</span>
-        <span class="article-platform">ZENN →</span>
-      </a><!-- /article-item -->
-    </div><!-- /articles-list -->
+
+    <div class="article-group reveal">
+      <p class="article-group-label">時彩 — TOKIIRO</p>
+      <div class="articles-list">
+        <a href="https://zenn.dev/nekotrack/articles/9613d1a1df1f24" target="_blank" class="article-item">
+          <span class="article-num">01</span>
+          <span class="article-title">「清らかな朝のような色」がそのまま色座標になる — 情景×時間帯で色を選ぶツール「時彩」を作った</span>
+          <span class="article-platform">ZENN →</span>
+        </a><!-- /article-item -->
+        <a href="https://note.com/nekotrack/n/n923cf8f27588" target="_blank" class="article-item">
+          <span class="article-num">02</span>
+          <span class="article-title">色を「選ぶ」より「出会う」— 時彩(TOKIIRO) で AI・デザインツールに渡すパレットを作る</span>
+          <span class="article-platform">NOTE →</span>
+        </a><!-- /article-item -->
+        <a href="https://zenn.dev/nekotrack/articles/3c6e176fcfe34f" target="_blank" class="article-item">
+          <span class="article-num">03</span>
+          <span class="article-title">OKLCH の L だけ動かして WCAG AA を保証する — 時彩 Ver. 1.0 と二分探索の話</span>
+          <span class="article-platform">ZENN →</span>
+        </a><!-- /article-item -->
+        <a href="https://note.com/nekotrack/n/n0c2863524cd8" target="_blank" class="article-item">
+          <span class="article-num">04</span>
+          <span class="article-title">色を「決める」から「整える」へ — 時彩 1.0 で見えた、AI に渡す前の準備</span>
+          <span class="article-platform">NOTE →</span>
+        </a><!-- /article-item -->
+      </div><!-- /articles-list -->
+    </div><!-- /article-group -->
+
+    <div class="article-group reveal">
+      <p class="article-group-label">OKLCH+/Hue Modulation</p>
+      <div class="articles-list">
+        <a href="https://zenn.dev/nekotrack/articles/35849cff2ba1c4" target="_blank" class="article-item">
+          <span class="article-num">01</span>
+          <span class="article-title">OKLCH グラデーションで色かぶりが起きる理由と、なめらかな解消法</span>
+          <span class="article-platform">ZENN →</span>
+        </a><!-- /article-item -->
+        <a href="https://note.com/nekotrack/n/n822dd5bbcefd" target="_blank" class="article-item">
+          <span class="article-num">02</span>
+          <span class="article-title">OKLCH グラデーションで意図しない色が現れる理由</span>
+          <span class="article-platform">NOTE →</span>
+        </a><!-- /article-item -->
+        <a href="https://zenn.dev/nekotrack/articles/7c3487c5a9375a" target="_blank" class="article-item">
+          <span class="article-num">03</span>
+          <span class="article-title">OKLCH 極座標補間の特異点を「滑らかに」解消する</span>
+          <span class="article-platform">ZENN →</span>
+        </a><!-- /article-item -->
+        <a href="https://zenn.dev/nekotrack/articles/290dea9ac90fa9" target="_blank" class="article-item">
+          <span class="article-num">04</span>
+          <span class="article-title">Oklch+ — 3パラメータで CIEDE2000 を超える色差改善の記録</span>
+          <span class="article-platform">ZENN →</span>
+        </a><!-- /article-item -->
+      </div><!-- /articles-list -->
+    </div><!-- /article-group -->
   </section><!-- /articles -->
 
 </main><!-- /main -->
